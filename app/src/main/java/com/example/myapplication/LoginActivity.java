@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.BODYINFO.SaveSharedPreference;
 import com.example.myapplication.DTO.BodyShopDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
+    BodyShopDTO dto = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,16 +48,19 @@ public class LoginActivity extends AppCompatActivity {
                                 EditText userId = (EditText) findViewById(R.id.userId);
                                 EditText userpw = (EditText) findViewById(R.id.userPw);
 
-                                String a = sendPost(userId.getText().toString(), userpw.getText().toString());
+                                dto = sendPost(userId.getText().toString(), userpw.getText().toString());
+                                Log.i("LOGIN", dto.getBodyshop_id());
 
-                                if (a.equals("성공")){
+                                if (dto.getBodyshop_id().equals("NO")){
+                                    makeDialog();
+                                } else {
                                     Intent intent = new Intent();
                                     ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.MyReservationActivity");
                                     intent.setComponent(componentName);
+                                    intent.putExtra("data", dto);
                                     startActivity(intent);
+                                    Log.i("LOGIN", dto.getBodyshop_id());
                                     Log.i("msi", "로그인 성공!!");
-                                } else {
-                                    makeDialog();
                                 }
                             } catch (Exception e) {
                                 Log.i("msi", e.toString());
@@ -90,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private String sendPost(String id, String pw) throws Exception {
+    private BodyShopDTO sendPost(String id, String pw) throws Exception {
 
         String receivedata;
         String sendMsg;
@@ -134,12 +140,51 @@ public class LoginActivity extends AppCompatActivity {
         BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {});
         Log.i("LOGIN", myObject.getBodyshop_id());
         Log.i("오은애", "오은애");
-        if (myObject.getBodyshop_id().equals("0")) {
-            return "실패";
-        }else {
-            return "성공";
-        }
+//        if (myObject.getBodyshop_id().equals("0")) {
+//
+//        }else {
+//            SaveSharedPreference.setBodyShopNo(LoginActivity.this, myObject.getBodyshop_no());
+//            SaveSharedPreference.setBodyShopId(LoginActivity.this, myObject.getBodyshop_id());
+//            SaveSharedPreference.setBodyShopPw(LoginActivity.this, myObject.getBodyshop_pw());
+//            SaveSharedPreference.setBodyShopName(LoginActivity.this, myObject.getBodyshop_name());
+//            SaveSharedPreference.setBodyShopAddress(LoginActivity.this, myObject.getBodyshop_address());
+//            SaveSharedPreference.setBodyShopLat(LoginActivity.this, myObject.getBodyshop_lat());
+//            SaveSharedPreference.setBodyShopLong(LoginActivity.this, myObject.getBodyshop_long());
+//            Log.i("오은애", SaveSharedPreference.getBodyShopName(LoginActivity.this));
+
+
+
+
+        return myObject;
+    }
+    // 값 불러오기
+    private void getPreferences(){
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        pref.getString("hi", "");
     }
 
+    // 값 저장하기
+    private void savePreferences(){
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("hi", "인사잘하네");
+        editor.commit();
+    }
+
+    // 값(Key Data) 삭제하기
+    private void removePreferences(){
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.remove("hi");
+        editor.commit();
+    }
+
+    // 값(ALL Data) 삭제하기
+    private void removeAllPreferences(){
+        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+    }
 
 }

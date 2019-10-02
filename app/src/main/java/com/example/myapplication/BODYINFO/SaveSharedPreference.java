@@ -3,6 +3,7 @@ package com.example.myapplication.BODYINFO;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class SaveSharedPreference {
     static final String PREF_BODY_SHOP_NO = "username";
@@ -20,13 +21,14 @@ public class SaveSharedPreference {
     // 정비소 No 정보 저장
     public static void setBodyShopNo(Context ctx, String bodyShopId) {
         SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
+        Log.i("정비소 데이터 : ", bodyShopId);
         editor.putString(PREF_BODY_SHOP_NO, bodyShopId);
         editor.commit();
     }
 
     // 저장된 정비소 No 정보 가져오기
     public static String getBodyShopNo(Context ctx) {
-        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_NO, "NO");
+        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_NO, "");
     }
 
     // 정비소 아이디 정보 저장
@@ -38,7 +40,7 @@ public class SaveSharedPreference {
 
     // 저장된 정비소 아이디 정보 가져오기
     public static String getBodyShopId(Context ctx) {
-        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_ID, "NO");
+        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_ID, "");
     }
 
     // 정비소 비밀번호 정보 저장
@@ -50,7 +52,7 @@ public class SaveSharedPreference {
 
     // 저장된 정비소 비밀번호 정보 가져오기
     public static String getBodyShopPw(Context ctx) {
-        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_PW, "NO");
+        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_PW, "");
     }
 
     // 정비소 이름 정보 저장
@@ -62,7 +64,7 @@ public class SaveSharedPreference {
 
     // 저장된 정비소 이름 정보 가져오기
     public static String getBodyShopName(Context ctx) {
-        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_NAME, "NO");
+        return getSharedPreferences(ctx).getString(PREF_BODY_SHOP_NAME, "");
     }
 
 

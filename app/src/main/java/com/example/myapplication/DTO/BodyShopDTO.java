@@ -1,6 +1,9 @@
 package com.example.myapplication.DTO;
 
-public class BodyShopDTO {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class BodyShopDTO implements Parcelable {
     String bodyshop_no;
     String bodyshop_id;
     String bodyshop_pw;
@@ -21,6 +24,28 @@ public class BodyShopDTO {
         this.bodyshop_lat = bodyshop_lat;
         this.bodyshop_long = bodyshop_long;
     }
+
+    protected BodyShopDTO(Parcel in) {
+        bodyshop_no = in.readString();
+        bodyshop_id = in.readString();
+        bodyshop_pw = in.readString();
+        bodyshop_name = in.readString();
+        bodyshop_address = in.readString();
+        bodyshop_lat = in.readString();
+        bodyshop_long = in.readString();
+    }
+
+    public static final Creator<BodyShopDTO> CREATOR = new Creator<BodyShopDTO>() {
+        @Override
+        public BodyShopDTO createFromParcel(Parcel in) {
+            return new BodyShopDTO(in);
+        }
+
+        @Override
+        public BodyShopDTO[] newArray(int size) {
+            return new BodyShopDTO[size];
+        }
+    };
 
     public String getBodyshop_no() {
         return bodyshop_no;
@@ -76,5 +101,21 @@ public class BodyShopDTO {
 
     public void setBodyshop_long(String bodyshop_long) {
         this.bodyshop_long = bodyshop_long;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(bodyshop_no);
+        dest.writeString(bodyshop_id);
+        dest.writeString(bodyshop_pw);
+        dest.writeString(bodyshop_name);
+        dest.writeString(bodyshop_address);
+        dest.writeString(bodyshop_lat);
+        dest.writeString(bodyshop_long);
     }
 }
