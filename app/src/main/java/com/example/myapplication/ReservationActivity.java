@@ -1,20 +1,13 @@
 package com.example.myapplication;
 
-import android.content.ComponentName;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.DTO.BodyShopDTO;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
@@ -22,11 +15,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginActivity extends AppCompatActivity {
+public class ReservationActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,17 +38,10 @@ public class LoginActivity extends AppCompatActivity {
                                 EditText userId = (EditText) findViewById(R.id.userId);
                                 EditText userpw = (EditText) findViewById(R.id.userPw);
 
-                                String a = sendPost(userId.getText().toString(), userpw.getText().toString());
-
-                                if (a.equals("성공")){
-                                    Intent intent = new Intent();
-                                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.MyReservationActivity");
-                                    intent.setComponent(componentName);
-                                    startActivity(intent);
-                                    Log.i("msi", "로그인 성공!!");
-                                } else {
-                                    makeDialog();
-                                }
+                                 String id = userId.getText().toString();
+                                 String pw = userpw.getText().toString();
+                                sendPost(id, pw);
+                                Log.i("msi", id);
                             } catch (Exception e) {
                                 Log.i("msi", e.toString());
                             }
@@ -76,18 +62,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         });
-    }
-
-    public void makeDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
-        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();     //닫기
-            }
-        });
-        alert.setMessage("긁적 로그인 실패했는디 다시 로그인 해볼라요?");
-        alert.show();
     }
 
     private String sendPost(String id, String pw) throws Exception {
@@ -130,15 +104,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         receivedata = response.toString();
         in.close();
-        Log.i("LOGIN", receivedata);
-        BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {});
-        Log.i("LOGIN", myObject.getBodyshop_id());
+        Log.i("KAKAOBOOKLog22", receivedata);
+
         Log.i("오은애", "오은애");
-        if (myObject.getBodyshop_id().equals("0")) {
-            return "실패";
-        }else {
-            return "성공";
-        }
+
+
+        return receivedata;
     }
 
 
