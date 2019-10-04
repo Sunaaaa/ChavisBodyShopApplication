@@ -15,9 +15,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,9 +43,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.security.AccessController.getContext;
+
 public class ReservationStatusActivity extends AppCompatActivity {
 
-
+    SharedPreferences preferences;
+    String flag = "";
 
     class MyReservationRunnable implements Runnable{
         private String id;
@@ -111,6 +116,80 @@ public class ReservationStatusActivity extends AppCompatActivity {
     }
 
 
+    class ChangeReservationRunnable implements Runnable{
+        private String id;
+        private String no;
+        private String rtime;
+        private String rperson;
+        private Handler handler;
+
+        public ChangeReservationRunnable(String id, String no, String rtime, String rperson, Handler handler) {
+            this.id = id;
+            this.no = no;
+            this.rtime = rtime;
+            this.rperson = rperson;
+            this.handler = handler;
+        }
+
+        @Override
+        public void run() {
+            String receivedata = "";
+            URL url = null;
+            try {
+                url = new URL("http://70.12.115.57:9090/TestProject/blist.do");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("Connection", "Keep-Alive");
+                conn.setRequestProperty("charset", "utf-8");
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+
+                Map<String, String> map = new HashMap<String, String>();
+
+                map.put("bodyshop_id", id);
+                map.put("reservation_no", no);
+                map.put("repaired_time", rtime);
+                map.put("repaired_person", rperson);
+
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(map);
+
+                Log.i("msi", "가랏 데이터 : " + json);
+
+                osw.write(json);
+                osw.flush();
+
+                Log.i("msi", "222");
+                int responseCode = conn.getResponseCode();
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                receivedata = response.toString();
+                ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
+                in.close();
+                Log.i("ReservationList__", receivedata);
+                Log.i("ReservationList__", myObject.get(1).getMember_mname());
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("reservation_list", myObject);
+
+                Message message = new Message();
+                message.setData(bundle);
+                Log.i("ReservationList__", String.valueOf(myObject.size()));
+
+                handler.sendMessage(message);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,11 +208,11 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
         listView = (ListView)findViewById(R.id.reservation_listview);
 
-        SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+        preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         String myObject = preferences.getString("myObject", "NO");
 
         Gson gson = new Gson();
-        BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
+        final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
 
         Log.i("정비소 이름 들어옴", bodyShopDTO.getBodyshop_name());
         shop_name.setText(bodyShopDTO.getBodyshop_name());
@@ -149,6 +228,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
                     Log.i("정비소 이름 들어옴", dto.getMember_mname());
                     adapter.addItem(dto);
                 }
+                adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
             }
         };
@@ -164,16 +244,17 @@ public class ReservationStatusActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getMember_mname(), Toast.LENGTH_SHORT).show();
-                ReservationListDTO reservationListDTO = new ReservationListDTO();
+//                ReservationListDTO reservationListDTO = new ReservationListDTO();
+                ReservationListDTO reservationListDTO = adapter.getItem(position);
 
-                reservationListDTO.setCar_id(adapter.getItem(position).getCar_id());
-                reservationListDTO.setCar_type(adapter.getItem(position).getCar_type());
-                reservationListDTO.setKey(adapter.getItem(position).getKey());
-                reservationListDTO.setKey_expire_time(adapter.getItem(position).getKey_expire_time());
-                reservationListDTO.setMember_mname(adapter.getItem(position).getMember_mname());
-                reservationListDTO.setRepaired_person(adapter.getItem(position).getRepaired_person());
-                reservationListDTO.setRepaired_time(adapter.getItem(position).getRepaired_time());
-                reservationListDTO.setReservation_time(adapter.getItem(position).getReservation_time());
+//                reservationListDTO.setCar_id(adapter.getItem(position).getCar_id());
+//                reservationListDTO.setCar_type(adapter.getItem(position).getCar_type());
+//                reservationListDTO.setKey(adapter.getItem(position).getKey());
+//                reservationListDTO.setKey_expire_time(adapter.getItem(position).getKey_expire_time());
+//                reservationListDTO.setMember_mname(adapter.getItem(position).getMember_mname());
+//                reservationListDTO.setRepaired_person(adapter.getItem(position).getRepaired_person());
+//                reservationListDTO.setRepaired_time(adapter.getItem(position).getRepaired_time());
+//                reservationListDTO.setReservation_time(adapter.getItem(position).getReservation_time());
                 Log.i("msi", reservationListDTO.getMember_mname());
 
 //                if (reservationListDTO.getRepaired_time().equals("NO")){
@@ -181,6 +262,13 @@ public class ReservationStatusActivity extends AppCompatActivity {
                     makeDialog(reservationListDTO);
                 } else {
                     checkDialog(reservationListDTO);
+                }
+
+
+                if (flag.equals("true")){
+                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bodyShopDTO.getBodyshop_no(), reservationListDTO.getReservation_no(), reservationListDTO.getRepaired_time(), reservationListDTO.getRepaired_person(), handler);
+                    Thread thread = new Thread(changeReservationRunnable);
+                    thread.start();
                 }
             }
         });
@@ -195,21 +283,22 @@ public class ReservationStatusActivity extends AppCompatActivity {
         long now2 = System.currentTimeMillis();
         Date date2 = new Date(now2);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        day.setText(sdf.format(date2));
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(ReservationStatusActivity.this);
         alert.setTitle(reservationListDTO.getMember_mname() + " 님의 차량 수리 확인");
         alert.setView(personname);
-
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final ImageView repair_status = (ImageView)findViewById(R.id.repair_status);
                 if (personname.getText().toString().length()==0){
                     // 채우세요 하는 다이어로드 띄우기
+                    flag = "false";
+                    Log.i("flag", flag);
                     dialog.dismiss();
                 } else {
-                    repair_status.setImageResource(R.drawable.done);
+                    flag = "true";
+                    Log.i("flag", flag);
                     dialog.dismiss();   //닫기
                 }
             }
@@ -220,8 +309,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 dialog.dismiss();   //닫기
             }
         });
-        alert.setView(day);
-        alert.setMessage("수리 담당 정비소의 이름을 입력하세요.");
+        alert.setMessage(sdf.format(date2));
         alert.show();
     }
 
