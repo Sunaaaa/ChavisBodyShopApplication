@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ReservationAdapter extends BaseAdapter {
 
-    private ArrayList<ReservationListDTO> list = new ArrayList<ReservationListDTO>();
+    private ArrayList<ReservationListDTO> list = new ArrayList<>();
 
     public ReservationAdapter() {
 

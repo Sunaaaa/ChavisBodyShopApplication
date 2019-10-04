@@ -43,8 +43,9 @@
         <TextView
             android:gravity="right"
             android:padding="10px"
-            android:id="@+id/date"
+            android:id="@+id/today"
             android:text="오늘 날짜"
+            android:textColor="@android:color/black"
             android:textStyle="bold"
             android:textSize="15dp"
             android:layout_width="match_parent"
