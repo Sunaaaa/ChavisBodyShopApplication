@@ -1,8 +1,11 @@
 package com.example.myapplication.DTO;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.sql.Date;
 
-public class ReservationListDTO {
+public class ReservationListDTO implements Parcelable {
     String key;
     String key_expire_time;
     String member_mname;
@@ -25,6 +28,46 @@ public class ReservationListDTO {
         this.repaired_time = repaired_time;
         this.repaired_person = repaired_person;
     }
+
+    protected ReservationListDTO(Parcel in) {
+        key = in.readString();
+        key_expire_time = in.readString();
+        member_mname = in.readString();
+        car_type = in.readString();
+        car_id = in.readString();
+        reservation_time = in.readString();
+        repaired_time = in.readString();
+        repaired_person = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(key);
+        dest.writeString(key_expire_time);
+        dest.writeString(member_mname);
+        dest.writeString(car_type);
+        dest.writeString(car_id);
+        dest.writeString(reservation_time);
+        dest.writeString(repaired_time);
+        dest.writeString(repaired_person);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ReservationListDTO> CREATOR = new Creator<ReservationListDTO>() {
+        @Override
+        public ReservationListDTO createFromParcel(Parcel in) {
+            return new ReservationListDTO(in);
+        }
+
+        @Override
+        public ReservationListDTO[] newArray(int size) {
+            return new ReservationListDTO[size];
+        }
+    };
 
     public String getKey() {
         return key;

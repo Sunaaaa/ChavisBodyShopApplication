@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SignatureActivity"></activity>
         <activity
             android:name=".OpeningActivity"
             android:theme="@style/NoActionBarTheme">
@@ -22,8 +23,7 @@
         </activity>
         <activity
             android:name=".ReservationStatusActivity"
-            android:theme="@style/NoActionBarTheme">
-        </activity>
+            android:theme="@style/NoActionBarTheme"></activity>
         <activity android:name=".ReservationActivity">
 
             <!-- <intent-filter> -->
@@ -34,14 +34,11 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:theme="@style/NoActionBarTheme"
             android:name=".RegistActivity"
-            />
+            android:theme="@style/NoActionBarTheme" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/NoActionBarTheme">
-
-        </activity>
+            android:theme="@style/NoActionBarTheme"></activity>
         <!--
         <service
             android:name=".MyReservationService"

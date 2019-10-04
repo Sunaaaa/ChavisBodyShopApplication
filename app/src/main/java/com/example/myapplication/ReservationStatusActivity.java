@@ -3,14 +3,22 @@ package com.example.myapplication;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myapplication.DTO.BodyShopDTO;
+import com.example.myapplication.DTO.ReservationListDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
@@ -20,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,10 +80,19 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 }
 
                 receivedata = response.toString();
+                ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
                 in.close();
-                Log.i("KAKAOBOOKLog22", receivedata);
+                Log.i("ReservationList__", receivedata);
+                Log.i("ReservationList__", myObject.get(1).getMember_mname());
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("reservation_list", myObject);
 
-                Log.i("오은애", "오은애");
+                Message message = new Message();
+                message.setData(bundle);
+                Log.i("ReservationList__", String.valueOf(myObject.size()));
+
+                handler.sendMessage(message);
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -86,10 +104,13 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final ListView listView;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation_status);
 
         TextView shop_name = (TextView)findViewById(R.id.shop_name);
+        listView = (ListView)findViewById(R.id.reservation_listview);
 
         SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         String myObject = preferences.getString("myObject", "NO");
@@ -99,14 +120,32 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
         Log.i("정비소 이름 들어옴", bodyShopDTO.getBodyshop_name());
         shop_name.setText(bodyShopDTO.getBodyshop_name());
+        final ReservationAdapter adapter = new ReservationAdapter();
 
         final Handler handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-
+                Bundle bundle = msg.getData();
+                ArrayList<ReservationListDTO> result = bundle.getParcelableArrayList("reservation_list");
+                for (ReservationListDTO dto : result){
+                    Log.i("정비소 이름 들어옴", dto.getMember_mname());
+                    adapter.addItem(dto);
+                }
+                listView.setAdapter(adapter);
             }
         };
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getApplicationContext(), adapter.getItem(position).toString(), Toast.LENGTH_SHORT).show();
+                ReservationListDTO reservationListDTO = adapter.getItem(position);
+                Intent intent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.SignatureActivity");
+            }
+        });
+
         Log.i("msi", "쓰레드 스타트 해봅시다");
 
         MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);

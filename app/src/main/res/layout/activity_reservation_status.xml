@@ -17,6 +17,7 @@
             android:padding="10px"
             android:id="@+id/shop_name"
             android:text="정비소 이름"
+            android:textColor="@android:color/black"
             android:textStyle="bold"
             android:textSize="25dp"
             android:layout_width="match_parent"
@@ -26,13 +27,14 @@
             android:padding="10px"
             android:text="예약 현황"
             android:textStyle="bold"
+            android:textColor="@android:color/black"
             android:textSize="25dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
     <LinearLayout
-        android:layout_margin="30dp"
+        android:layout_margin="15dp"
         android:layout_marginTop="20px"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -65,8 +67,9 @@
                 android:gravity="right"
                 android:padding="10px"
                 android:text="다른 날짜 예약 보기"
+                android:textColor="@android:color/black"
                 android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -81,8 +84,8 @@
 
         <ListView
             android:layout_margin="30dp"
-            android:divider="@null"
-            android:dividerHeight="0dp"
+            android:divider="#00000000"
+            android:dividerHeight="8dp"
             android:id="@+id/reservation_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

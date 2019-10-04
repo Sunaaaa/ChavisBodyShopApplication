@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.DTO.BodyShopDTO;
@@ -19,6 +21,10 @@ public class ReservationAdapter extends BaseAdapter {
 
     private ArrayList<ReservationListDTO> list = new ArrayList<ReservationListDTO>();
 
+    public ReservationAdapter() {
+
+    }
+
     public void addItem(ReservationListDTO dto){
         list.add(dto);
     }
@@ -29,7 +35,7 @@ public class ReservationAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public ReservationListDTO getItem(int position) {
         return list.get(position);
     }
 
@@ -53,12 +59,12 @@ public class ReservationAdapter extends BaseAdapter {
         }
 
         // 출력한 View Component Reference 획득
+        TextView reservation_time = (TextView) view.findViewById(R.id.reservation_time);
         TextView member_mname = (TextView) view.findViewById(R.id.member_mname);
         TextView cartype = (TextView) view.findViewById(R.id.cartype);
         TextView carid = (TextView) view.findViewById(R.id.carid);
-        TextView reservation_time = (TextView) view.findViewById(R.id.reservation_time);
-        TextView key_status = (TextView) view.findViewById(R.id.key_status);
-        TextView repair_status = (TextView) view.findViewById(R.id.repair_status);
+        ImageView key_status = (ImageView) view.findViewById(R.id.key_status);
+        ImageView repair_status = (ImageView) view.findViewById(R.id.repair_status);
 
         // 화면에 출력할 데이터를 가져와요
         ReservationListDTO dto = list.get(i);
@@ -69,25 +75,21 @@ public class ReservationAdapter extends BaseAdapter {
 
             Log.i("DTO", "통과 1");
 
+            reservation_time.setText(dto.getReservation_time());
             member_mname.setText(dto.getMember_mname());
             cartype.setText(dto.getCar_type());
-            carid.setText("( " + dto.getCar_id() + " )");
-            reservation_time.setText(dto.getReservation_time());
+            carid.setText(" ( " + dto.getCar_id() + " ) ");
             String key_s = dto.getKey();
             if (key_s.equals("NO")){
-                key_status.setText("사용불가");
-                key_status.setTextColor(Color.RED);
+                key_status.setImageResource(R.drawable.nokey);
             } else {
-                key_status.setText("사용가능");
-                key_status.setTextColor(Color.BLUE);
+                key_status.setImageResource(R.drawable.key);
             }
             String repair_s = dto.getRepaired_time();
             if (repair_s.equals("NO")){
-                repair_status.setTextColor(Color.RED);
-                repair_status.setBackgroundResource(R.drawable.suriing);
+                key_status.setImageResource(R.drawable.ing);
             } else {
-                repair_status.setTextColor(Color.BLUE);
-                repair_status.setBackgroundResource(R.drawable.suriend);
+                key_status.setImageResource(R.drawable.done);
             }
             Log.i("DTO", "이쁘게 다 꾸몄네유~~~");
 
