@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,22 +13,23 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.BODYINFO.SaveSharedPreference;
 import com.example.myapplication.DTO.BodyShopDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     BodyShopDTO dto = null;
+    EditText userId, userpw;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -37,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reservation);
 
         Button btn = (Button) findViewById(R.id.btn_login);
+        userId = (EditText) findViewById(R.id.userId);
+        userpw = (EditText) findViewById(R.id.userPw);
+
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,17 +48,14 @@ public class LoginActivity extends AppCompatActivity {
                     Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
                         public void run() {
                             try {
-                                EditText userId = (EditText) findViewById(R.id.userId);
-                                EditText userpw = (EditText) findViewById(R.id.userPw);
-
                                 dto = sendPost(userId.getText().toString(), userpw.getText().toString());
                                 Log.i("LOGIN", dto.getBodyshop_id());
 
-                                if (dto.getBodyshop_id().equals("NO")){
+                                if (dto.getBodyshop_id().equals("NO")) {
                                     makeDialog();
                                 } else {
                                     Intent intent = new Intent();
-                                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.MyReservationActivity");
+                                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
                                     intent.setComponent(componentName);
                                     intent.putExtra("data", dto);
                                     startActivity(intent);
@@ -137,54 +137,17 @@ public class LoginActivity extends AppCompatActivity {
         receivedata = response.toString();
         in.close();
         Log.i("LOGIN", receivedata);
-        BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {});
+        BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {
+        });
         Log.i("LOGIN", myObject.getBodyshop_id());
-        Log.i("오은애", "오은애");
-//        if (myObject.getBodyshop_id().equals("0")) {
-//
-//        }else {
-//            SaveSharedPreference.setBodyShopNo(LoginActivity.this, myObject.getBodyshop_no());
-//            SaveSharedPreference.setBodyShopId(LoginActivity.this, myObject.getBodyshop_id());
-//            SaveSharedPreference.setBodyShopPw(LoginActivity.this, myObject.getBodyshop_pw());
-//            SaveSharedPreference.setBodyShopName(LoginActivity.this, myObject.getBodyshop_name());
-//            SaveSharedPreference.setBodyShopAddress(LoginActivity.this, myObject.getBodyshop_address());
-//            SaveSharedPreference.setBodyShopLat(LoginActivity.this, myObject.getBodyshop_lat());
-//            SaveSharedPreference.setBodyShopLong(LoginActivity.this, myObject.getBodyshop_long());
-//            Log.i("오은애", SaveSharedPreference.getBodyShopName(LoginActivity.this));
-
-
-
-
+        SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        Gson gson = new Gson();
+        String bodyshopjson = gson.toJson(myObject);
+        editor.putString("myObject", bodyshopjson);
+        editor.commit();
+        Log.i("LOGIN_ADD_SharedPref", "로그인 객체 저장 성공");
         return myObject;
-    }
-    // 값 불러오기
-    private void getPreferences(){
-        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        pref.getString("hi", "");
-    }
-
-    // 값 저장하기
-    private void savePreferences(){
-        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("hi", "인사잘하네");
-        editor.commit();
-    }
-
-    // 값(Key Data) 삭제하기
-    private void removePreferences(){
-        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.remove("hi");
-        editor.commit();
-    }
-
-    // 값(ALL Data) 삭제하기
-    private void removeAllPreferences(){
-        SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.clear();
-        editor.commit();
     }
 
 }

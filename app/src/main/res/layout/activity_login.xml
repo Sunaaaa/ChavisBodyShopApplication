@@ -43,11 +43,12 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="ID "
+                android:textColor="@android:color/black"
                 android:textSize="50px" />
 
             <EditText
                 android:id="@+id/userId"
-                android:text="sg행복a"
+                android:textColor="@android:color/black"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="50px"
@@ -67,13 +68,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textColor="@android:color/black"
                 android:text="PW "
                 android:textSize="50px" />
 
             <EditText
                 android:id="@+id/userPw"
-                android:text="1234"
                 android:layout_width="0dp"
+                android:textColor="@android:color/black"
                 android:layout_height="wrap_content"
                 android:layout_margin="50px"
                 android:layout_weight="2" />
