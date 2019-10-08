@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +42,32 @@ public class LoginActivity extends AppCompatActivity {
         userId = (EditText) findViewById(R.id.userId);
         userpw = (EditText) findViewById(R.id.userPw);
 
+        final InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.layout);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imm.hideSoftInputFromWindow(userId.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(userpw.getWindowToken(),0);
+            }
+        });
 
+//        LinearLayout idLayout = (LinearLayout)findViewById(R.id.idLayout);
+//        idLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                imm.hideSoftInputFromWindow(userId.getWindowToken(), 0);
+//            }
+//        });
+//
+//        LinearLayout pwLayout = (LinearLayout)findViewById(R.id.pwLayout);
+//        pwLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                imm.hideSoftInputFromWindow(userpw.getWindowToken(),0);
+//            }
+//        });
+//
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
