@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reservation);
+        setContentView(R.layout.activity_login);
 
         Button btn = (Button) findViewById(R.id.btn_login);
         userId = (EditText) findViewById(R.id.userId);
@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         String receivedata;
         String sendMsg;
 
-        URL url = new URL("http://70.12.115.57:9090/TestProject/blogin.do");
+        URL url = new URL("http://70.12.115.52:9090/Bodyshop/login.do");
 //        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

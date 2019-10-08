@@ -9,14 +9,15 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_weight="1"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
             android:layout_marginTop="30dp"
-            android:src="@drawable/icon"
+            android:src="@drawable/login_pic"
             android:adjustViewBounds="true"
-            android:scaleType="center"
+            android:scaleType="fitCenter"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -90,19 +91,21 @@
             android:orientation="horizontal">
 
             <Button
+                android:layout_margin="20dp"
                 android:id="@+id/btn_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/white"
+                android:background="@drawable/selector_loginbtn"
                 android:gravity="center"
                 android:text="로그인"
                 android:textColor="@android:color/black" />
 
             <Button
+                android:layout_margin="20dp"
                 android:id="@+id/btn_resist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/white"
+                android:background="@drawable/selector_registbtn"
                 android:gravity="center"
                 android:text="회원가입"
                 android:textColor="@android:color/black" />

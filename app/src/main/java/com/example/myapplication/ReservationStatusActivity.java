@@ -64,7 +64,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
             String receivedata = "";
             URL url = null;
             try {
-                url = new URL("http://70.12.115.57:9090/TestProject/blist.do");
+                url = new URL("http://70.12.115.52:9090/Reservation/list.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -133,10 +133,10 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            String receivedata = "";
+            String newreceivedata = "";
             URL url = null;
             try {
-                url = new URL("http://70.12.115.57:9090/TestProject/blist.do");
+                url = new URL("http://70.12.115.57:9090/Reservation/add.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -169,11 +169,11 @@ public class ReservationStatusActivity extends AppCompatActivity {
                     response.append(inputLine);
                 }
 
-                receivedata = response.toString();
-                ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
+                newreceivedata = response.toString();
+                ArrayList<ReservationListDTO> myObject = mapper.readValue(newreceivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
                 in.close();
-                Log.i("ReservationList__", receivedata);
-                Log.i("ReservationList__", myObject.get(1).getMember_mname());
+                Log.i("ReservationList_NEW_", newreceivedata);
+                Log.i("ReservationList_NEW_", myObject.get(1).getMember_mname());
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("reservation_list", myObject);
 
@@ -224,10 +224,12 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 Bundle bundle = msg.getData();
                 ArrayList<ReservationListDTO> result = bundle.getParcelableArrayList("reservation_list");
+
                 for (ReservationListDTO dto : result){
                     Log.i("정비소 이름 들어옴", dto.getMember_mname());
                     adapter.addItem(dto);
                 }
+
                 adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
             }
@@ -247,14 +249,6 @@ public class ReservationStatusActivity extends AppCompatActivity {
 //                ReservationListDTO reservationListDTO = new ReservationListDTO();
                 ReservationListDTO reservationListDTO = adapter.getItem(position);
 
-//                reservationListDTO.setCar_id(adapter.getItem(position).getCar_id());
-//                reservationListDTO.setCar_type(adapter.getItem(position).getCar_type());
-//                reservationListDTO.setKey(adapter.getItem(position).getKey());
-//                reservationListDTO.setKey_expire_time(adapter.getItem(position).getKey_expire_time());
-//                reservationListDTO.setMember_mname(adapter.getItem(position).getMember_mname());
-//                reservationListDTO.setRepaired_person(adapter.getItem(position).getRepaired_person());
-//                reservationListDTO.setRepaired_time(adapter.getItem(position).getRepaired_time());
-//                reservationListDTO.setReservation_time(adapter.getItem(position).getReservation_time());
                 Log.i("msi", reservationListDTO.getMember_mname());
 
 //                if (reservationListDTO.getRepaired_time().equals("NO")){
