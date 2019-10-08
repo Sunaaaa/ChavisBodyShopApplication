@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".CarKeyActivity"></activity>
         <activity
             android:name=".OpeningActivity"
             android:theme="@style/NoActionBarTheme">
@@ -24,7 +25,7 @@
         </activity>
         <activity
             android:name=".ReservationStatusActivity"
-            android:theme="@style/NoActionBarTheme"></activity>
+            android:theme="@style/NoActionBarTheme" />
         <activity android:name=".ReservationActivity">
 
             <!-- <intent-filter> -->
@@ -39,7 +40,7 @@
             android:theme="@style/NoActionBarTheme" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/NoActionBarTheme"></activity>
+            android:theme="@style/NoActionBarTheme" />
         <!--
         <service
             android:name=".MyReservationService"
