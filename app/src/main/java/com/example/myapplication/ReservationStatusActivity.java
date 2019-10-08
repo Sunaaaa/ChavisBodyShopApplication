@@ -48,7 +48,7 @@ import static java.security.AccessController.getContext;
 public class ReservationStatusActivity extends AppCompatActivity {
 
     SharedPreferences preferences;
-    String flag = "";
+    String flag = "", repair_t, repair_p, reservation_n;
 
     class MyReservationRunnable implements Runnable{
         private String id;
@@ -64,10 +64,10 @@ public class ReservationStatusActivity extends AppCompatActivity {
             String receivedata = "";
             URL url = null;
             try {
-                url = new URL("http://70.12.115.52:9090/Reservation/list.do");
+                url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/blist.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("Connection", "Keep-Alive");
                 conn.setRequestProperty("charset", "utf-8");
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
@@ -79,12 +79,12 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(map);
 
-                Log.i("msi", "가랏 데이터 : " + json);
+                Log.i("FIRST", "가랏 데이터 : " + json);
 
                 osw.write(json);
                 osw.flush();
 
-                Log.i("msi", "222");
+                Log.i("FIRST", "데이터 받기 ");
                 int responseCode = conn.getResponseCode();
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
@@ -97,14 +97,14 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 receivedata = response.toString();
                 ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
                 in.close();
-                Log.i("ReservationList__", receivedata);
-                Log.i("ReservationList__", myObject.get(1).getMember_mname());
+                Log.i("ReservationList__FIRST", receivedata);
+                Log.i("ReservationList__FIRST", myObject.get(1).getMember_mname());
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("reservation_list", myObject);
 
                 Message message = new Message();
                 message.setData(bundle);
-                Log.i("ReservationList__", String.valueOf(myObject.size()));
+                Log.i("ReservationList__FIRST", String.valueOf(myObject.size()));
 
                 handler.sendMessage(message);
 
@@ -117,71 +117,71 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
 
     class ChangeReservationRunnable implements Runnable{
-        private String id;
-        private String no;
+        private String bodyshop_no;
+        private String reservation_no;
         private String rtime;
         private String rperson;
-        private Handler handler;
 
-        public ChangeReservationRunnable(String id, String no, String rtime, String rperson, Handler handler) {
-            this.id = id;
-            this.no = no;
+        public ChangeReservationRunnable(String bodyshop_no, String reservation_no, String rtime, String rperson) {
+            this.bodyshop_no = bodyshop_no;
+            this.reservation_no = reservation_no;
             this.rtime = rtime;
             this.rperson = rperson;
-            this.handler = handler;
         }
 
         @Override
         public void run() {
             String newreceivedata = "";
             URL url = null;
+            URL url2 = null;
             try {
-                url = new URL("http://70.12.115.57:9090/Reservation/add.do");
+                url = new URL("http://70.12.115.73:9090/Chavis/Reservation/finishrepair.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("Connection", "Keep-Alive");
                 conn.setRequestProperty("charset", "utf-8");
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
 
                 Map<String, String> map = new HashMap<String, String>();
 
-                map.put("bodyshop_id", id);
-                map.put("reservation_no", no);
+                map.put("bodyshop_no", bodyshop_no);
+                map.put("reservation_no", reservation_no);
                 map.put("repaired_time", rtime);
                 map.put("repaired_person", rperson);
 
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(map);
 
-                Log.i("msi", "가랏 데이터 : " + json);
+                Log.i("SECOND", "가랏 데이터 : " + json);
 
                 osw.write(json);
                 osw.flush();
-
-                Log.i("msi", "222");
-                int responseCode = conn.getResponseCode();
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-
-                newreceivedata = response.toString();
-                ArrayList<ReservationListDTO> myObject = mapper.readValue(newreceivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
-                in.close();
-                Log.i("ReservationList_NEW_", newreceivedata);
-                Log.i("ReservationList_NEW_", myObject.get(1).getMember_mname());
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("reservation_list", myObject);
-
-                Message message = new Message();
-                message.setData(bundle);
-                Log.i("ReservationList__", String.valueOf(myObject.size()));
-
-                handler.sendMessage(message);
+                Log.i("SECOND", "가랏 데이터 결과 : " + conn.getResponseCode());
+//
+//                Log.i("msi", "222");
+//                int responseCode = conn.getResponseCode();
+//                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//                String inputLine;
+//                StringBuffer response = new StringBuffer();
+//
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//
+//                newreceivedata = response.toString();
+//                ArrayList<ReservationListDTO> myObject = mapper.readValue(newreceivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
+//                in.close();
+//                Log.i("ReservationList_NEW_", newreceivedata);
+//                Log.i("ReservationList_NEW_", myObject.get(1).getMember_mname());
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList("reservation_list", myObject);
+//
+//                Message message = new Message();
+//                message.setData(bundle);
+//                Log.i("ReservationList__", String.valueOf(myObject.size()));
+//
+//                handler.sendMessage(message);
 
 
             } catch (IOException e) {
@@ -214,7 +214,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
         Gson gson = new Gson();
         final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
 
-        Log.i("정비소 이름 들어옴", bodyShopDTO.getBodyshop_name());
+        Log.i("FIRST", bodyShopDTO.getBodyshop_name());
         shop_name.setText(bodyShopDTO.getBodyshop_name());
         final ReservationAdapter adapter = new ReservationAdapter();
 
@@ -226,7 +226,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 ArrayList<ReservationListDTO> result = bundle.getParcelableArrayList("reservation_list");
 
                 for (ReservationListDTO dto : result){
-                    Log.i("정비소 이름 들어옴", dto.getMember_mname());
+                    Log.i("FIRST", dto.getMember_mname());
                     adapter.addItem(dto);
                 }
 
@@ -235,12 +235,12 @@ public class ReservationStatusActivity extends AppCompatActivity {
             }
         };
 
-        Log.i("msi", "쓰레드 스타트 해봅시다");
+        Log.i("FIRST", "쓰레드 스타트 해봅시다");
 
         MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
         Thread thread = new Thread(myReservationRunnable);
         thread.start();
-        Log.i("msi", "쓰레드 스타트 함!");
+        Log.i("FIRST", "쓰레드 스타트 함!");
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -253,46 +253,67 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
 //                if (reservationListDTO.getRepaired_time().equals("NO")){
                 if (reservationListDTO.getRepaired_time() == null){
-                    makeDialog(reservationListDTO);
+                    makeDialog(reservationListDTO, bodyShopDTO);
+
+//                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bodyShopDTO.getBodyshop_no(), reservation_n, repair_t, repair_p, handler);
+//                    Thread thread = new Thread(changeReservationRunnable);
+//                    thread.start();
+
                 } else {
                     checkDialog(reservationListDTO);
                 }
 
+                Log.i("RESERVATION_LIST_FLAG", flag);
 
-                if (flag.equals("true")){
-                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bodyShopDTO.getBodyshop_no(), reservationListDTO.getReservation_no(), reservationListDTO.getRepaired_time(), reservationListDTO.getRepaired_person(), handler);
-                    Thread thread = new Thread(changeReservationRunnable);
-                    thread.start();
-                }
+//                if (flag.equals("true")){
+//                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bodyShopDTO.getBodyshop_no(), reservationListDTO.getReservation_no(), reservationListDTO.getRepaired_time(), reservationListDTO.getRepaired_person(), handler);
+//                    Thread thread = new Thread(changeReservationRunnable);
+//                    thread.start();
+//                }
             }
         });
 
     }
 
-    public void makeDialog(ReservationListDTO reservationListDTO) {
+    public void makeDialog(final ReservationListDTO reservationListDTO, final BodyShopDTO bDTO) {
         final EditText personname = new EditText(getApplicationContext());
         personname.setSingleLine(true);
         final TextView day = new TextView(getApplicationContext());
 
         long now2 = System.currentTimeMillis();
-        Date date2 = new Date(now2);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        final Date date2 = new Date(now2);
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(ReservationStatusActivity.this);
         alert.setTitle(reservationListDTO.getMember_mname() + " 님의 차량 수리 확인");
+        Log.i("나와라 예약 넘버여", reservationListDTO.getMember_mname());
+        alert.setMessage(sdf.format(date2));
         alert.setView(personname);
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final ImageView repair_status = (ImageView)findViewById(R.id.repair_status);
-                if (personname.getText().toString().length()==0){
+                if (personname.getText().toString().length()!=0){
                     // 채우세요 하는 다이어로드 띄우기
-                    flag = "false";
-                    Log.i("flag", flag);
+                    flag = "true";
+                    repair_t = sdf.format(date2);
+                    repair_p = personname.getText().toString();
+                    reservation_n = reservationListDTO.getReservation_no();
+                    Log.i("SECOND_ChangeR", "FALSE");
+                    Log.i("SECOND_ChangeR", "데이터 변경 합니다.");
+                    Log.i("RESERVATION_LIST_FLAG", repair_p);
+                    Log.i("RESERVATION_LIST_FLAG", repair_t);
+                    Log.i("RESERVATION_LIST_FLAG", repair_t);
+                    Log.i("RESERVATION_LIST_FLAG", reservationListDTO.getReservation_no());
+
+                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bDTO.getBodyshop_no(), reservation_n, repair_t, repair_p);
+                    Thread thread = new Thread(changeReservationRunnable);
+                    thread.start();
+
                     dialog.dismiss();
                 } else {
-                    flag = "true";
-                    Log.i("flag", flag);
+                    flag = "false";
+//                    Log.i("flag", flag);
                     dialog.dismiss();   //닫기
                 }
             }
@@ -303,7 +324,6 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 dialog.dismiss();   //닫기
             }
         });
-        alert.setMessage(sdf.format(date2));
         alert.show();
     }
 

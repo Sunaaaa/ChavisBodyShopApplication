@@ -4,24 +4,32 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.example.myapplication.DTO.BodyShopDTO;
 import com.example.myapplication.DTO.ReservationListDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,14 +38,18 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegistActivity extends AppCompatActivity {
 
     String name = "", pw = "";
-    EditText res_name_ET, reg_pw_ET, detailAddress_ET;
+    EditText res_name_ET, reg_pw_ET, detailAddress_ET, reg_pwCk_ET;
     ArrayAdapter<CharSequence> adspin1, adspin2;
     Spinner spin1, spin2;
     String choice_do = "", choice_se = "", address = "";
+    ImageView imageView;
+    Button doregist;
 
     class RegistRunnable implements Runnable {
 
@@ -110,11 +122,14 @@ public class RegistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regist);
 
-        res_name_ET = (EditText) findViewById(R.id.reg_Id);
+        res_name_ET = (EditText) findViewById(R.id.reg_name);
         reg_pw_ET = (EditText) findViewById(R.id.reg_pw);
+        reg_pwCk_ET = (EditText)findViewById(R.id.reg_pwCk);
         detailAddress_ET = (EditText) findViewById(R.id.detailAddress);
+        imageView = (ImageView)findViewById(R.id.ckImg);
         spin1 = (Spinner) findViewById(R.id.spinner);
         spin2 = (Spinner) findViewById(R.id.spinner2);
+        doregist = (Button)findViewById(R.id.doregist);
 
         adspin1 = ArrayAdapter.createFromResource(this, R.array.spinner_do, android.R.layout.simple_spinner_dropdown_item);
         adspin1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -419,6 +434,64 @@ public class RegistActivity extends AppCompatActivity {
 
             }
         });
+        reg_pw_ET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (reg_pwCk_ET.getText().length()!=0){
+                    if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
+                        imageView.setImageResource(R.drawable.ck);
+                    } else {
+                        imageView.setImageResource(R.drawable.nck);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        reg_pwCk_ET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
+                    imageView.setImageResource(R.drawable.ck);
+                } else {
+                    imageView.setImageResource(R.drawable.nck);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        final InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.reglayout);
+
+        // editText가 아닌 다른 곳을 터치하면 키보드 숨기기 기능 발동
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imm.hideSoftInputFromWindow(res_name_ET.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(reg_pw_ET.getWindowToken(),0);
+                imm.hideSoftInputFromWindow(reg_pwCk_ET.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(detailAddress_ET.getWindowToken(),0);
+            }
+        });
 
         final Handler handler = new Handler() {
             @Override
@@ -435,20 +508,70 @@ public class RegistActivity extends AppCompatActivity {
 
             }
         };
-
-        Button btn_regist = (Button) findViewById(R.id.btn_regist);
-        btn_regist.setOnClickListener(new View.OnClickListener() {
+        doregist.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View v) {
+
                 name = res_name_ET.getText().toString();
                 pw = reg_pw_ET.getText().toString();
                 address = choice_do + " " + choice_se + " " + detailAddress_ET.getText().toString();
-                RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
-                Thread t = new Thread(mRegistRunnable);
-                t.start();
 
+                if (name.length()==0 || pw.length()==0 || choice_se.length()==0 || choice_do.length()==0 || !pw.equals(reg_pwCk_ET.getText().toString())){
+                    fillDataDialog();
+
+                } else {
+//                    RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
+//                    Thread t = new Thread(mRegistRunnable);
+//                    t.start();
+                    try {
+                        Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
+                            public void run() {
+                                try {
+                                    String result = "";
+                                    result = sendPost(res_name_ET.getText().toString(), reg_pw_ET.getText().toString(), address);
+                                    Log.i("LOGIN", result);
+
+                                    if (!result.equals("SUCCESS")) {
+                                        makeDialog();
+                                    } else {
+                                        Intent intent = new Intent();
+                                        ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+                                        intent.setComponent(componentName);
+                                        startActivity(intent);
+                                        Log.i("REGIST__", "회원가입 성공!!");
+                                    }
+                                } catch (Exception e) {
+                                    Log.i("REGIST__", e.toString());
+                                }
+                            }
+                        };
+                        wThread.start();
+
+                        try {
+                            wThread.join();
+                        } catch (Exception e) {
+                            Log.i("REGIST__", e.toString());
+                        }
+                    } catch (Exception e) {
+                        Log.i("REGIST__", e.toString());
+                    }
+                }
             }
         });
+    }
+
+    // 회원 가입 실패
+    public void fillDataDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(RegistActivity.this);
+        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();     //닫기
+            }
+        });
+        alert.setMessage("회원가입 정보 다시 확인하세요.");
+        alert.show();
     }
 
     // 회원 가입 실패
@@ -479,4 +602,50 @@ public class RegistActivity extends AppCompatActivity {
         alert.setMessage("회원가입이 완료되었습니다." + "\n" + " 로그인 페이지로 이동합니다.");
         alert.show();
     }
+
+
+    private String sendPost(String name, String pw, String address) throws Exception {
+
+        String receiveData;
+
+        URL url = new URL("http://70.12.115.52:9090/Bodyshop/login.do");
+//        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
+
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Connection", "Keep-Alive");
+        conn.setRequestProperty("charset", "utf-8");
+        OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+
+        Map<String, String> map = new HashMap<String, String>();
+
+
+        map.put("name", name);
+        map.put("pw", pw);
+        map.put("addredd", address);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(map);
+
+        Log.i("REGIST__", "가랏 회원가입 데이터 : " + json);
+
+        osw.write(json);
+        osw.flush();
+
+
+        Log.i("REGIST__", "222");
+        int responseCode = conn.getResponseCode();
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        receiveData = response.toString();
+        in.close();
+        Log.i("REGIST__", receiveData);
+        return receiveData;
+    }
+
 }

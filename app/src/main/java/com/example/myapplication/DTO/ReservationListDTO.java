@@ -31,6 +31,30 @@ public class ReservationListDTO implements Parcelable {
         this.repaired_person = repaired_person;
     }
 
+    protected ReservationListDTO(Parcel in) {
+        reservation_no = in.readString();
+        key = in.readString();
+        key_expire_time = in.readString();
+        member_mname = in.readString();
+        car_type = in.readString();
+        car_id = in.readString();
+        reservation_time = in.readString();
+        repaired_time = in.readString();
+        repaired_person = in.readString();
+    }
+
+    public static final Creator<ReservationListDTO> CREATOR = new Creator<ReservationListDTO>() {
+        @Override
+        public ReservationListDTO createFromParcel(Parcel in) {
+            return new ReservationListDTO(in);
+        }
+
+        @Override
+        public ReservationListDTO[] newArray(int size) {
+            return new ReservationListDTO[size];
+        }
+    };
+
     public String getReservation_no() {
         return reservation_no;
     }
@@ -110,6 +134,14 @@ public class ReservationListDTO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(reservation_no);
+        dest.writeString(key);
+        dest.writeString(key_expire_time);
+        dest.writeString(member_mname);
+        dest.writeString(car_type);
+        dest.writeString(car_id);
+        dest.writeString(reservation_time);
+        dest.writeString(repaired_time);
+        dest.writeString(repaired_person);
     }
 }

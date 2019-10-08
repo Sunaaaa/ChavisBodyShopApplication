@@ -38,12 +38,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Button btn = (Button) findViewById(R.id.btn_login);
+        Button btn_login = (Button) findViewById(R.id.btn_login);
+        Button btn_regist = (Button) findViewById(R.id.btn_regist);
         userId = (EditText) findViewById(R.id.userId);
         userpw = (EditText) findViewById(R.id.userPw);
 
         final InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         LinearLayout linearLayout = (LinearLayout)findViewById(R.id.layout);
+
+        // editText가 아닌 다른 곳을 터치하면 키보드 숨기기 기능 발동
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,24 +54,17 @@ public class LoginActivity extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(userpw.getWindowToken(),0);
             }
         });
+        btn_regist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent doRegistIntent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication","com.example.myapplication.RegistActivity");
+                doRegistIntent.setComponent(componentName);
+                startActivity(doRegistIntent);
+            }
+        });
 
-//        LinearLayout idLayout = (LinearLayout)findViewById(R.id.idLayout);
-//        idLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                imm.hideSoftInputFromWindow(userId.getWindowToken(), 0);
-//            }
-//        });
-//
-//        LinearLayout pwLayout = (LinearLayout)findViewById(R.id.pwLayout);
-//        pwLayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                imm.hideSoftInputFromWindow(userpw.getWindowToken(),0);
-//            }
-//        });
-//
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -128,12 +124,14 @@ public class LoginActivity extends AppCompatActivity {
         String receivedata;
         String sendMsg;
 
-        URL url = new URL("http://70.12.115.52:9090/Bodyshop/login.do");
+//        URL url = new URL("http://70.12.115.57:9090/TestProject/blogin.do");
+        URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/login.do");
 //        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+//        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Connection", "Keep-Alive");
         conn.setRequestProperty("charset", "utf-8");
         OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
