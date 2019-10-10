@@ -1,6 +1,6 @@
 # Chavis
 
-![1570719347499](C:\Users\USER\AppData\Roaming\Typora\typora-user-images\1570719347499.png)
+![1570719347499](https://user-images.githubusercontent.com/39547788/66580603-a1f25080-ebb9-11e9-8c9f-45c4ad6c96e5.png)
 
 ## 정비소 전용 Application
 
