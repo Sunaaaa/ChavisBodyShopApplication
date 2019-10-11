@@ -24,7 +24,7 @@ public class OpeningActivity extends AppCompatActivity {
 
         Handler mHandler = new Handler();
         mHandler.postDelayed(new SplashHandler(), 3000);
-        Log.i("SplashAcitivty", "SplashAcitivty");
+        Log.i("OpeningActivity", "OpeningActivity");
     }
 
     private class SplashHandler implements Runnable{
