@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,16 +37,21 @@ public class OpeningActivity extends AppCompatActivity {
             SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
             String data = preferences.getString("myObject", "NO");
 
-//            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-//            OpeningActivity.this.finish();
-            // call LoginActivity
+            // 로그인 데이터 없음  -  call LoginActivity
             if(data.equals("NO")) {
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 OpeningActivity.this.finish();
             } else {
-                // Call MapsActivity
+                // 서비스 실행
+                Intent i = new Intent();
+                ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+                i.setComponent(sComponentName);
+                startService(i);
+
+                // 로그인 데이터 있음 - Call ReservationStatusActivity
                 startActivity(new Intent(getApplicationContext(), ReservationStatusActivity.class));
                 OpeningActivity.this.finish();
+
             }
         }
     }

@@ -246,118 +246,18 @@ public class ReservationStatusActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getMember_mname(), Toast.LENGTH_SHORT).show();
-//                ReservationListDTO reservationListDTO = new ReservationListDTO();
                 ReservationListDTO reservationListDTO = adapter.getItem(position);
 
-                Log.i("msi", reservationListDTO.getMember_mname());
+                Log.i("reservation_item", reservationListDTO.getMember_mname());
+                Intent intent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.CarKeyActivity");
+                intent.setComponent(componentName);
+                intent.putExtra("reservation_info", reservationListDTO);
+                startActivity(intent);
 
-//                if (reservationListDTO.getRepaired_time().equals("NO")){
-                if (reservationListDTO.getRepaired_time() == null){
-                    makeDialog(reservationListDTO, bodyShopDTO);
-
-//                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bodyShopDTO.getBodyshop_no(), reservation_n, repair_t, repair_p, handler);
-//                    Thread thread = new Thread(changeReservationRunnable);
-//                    thread.start();
-
-                } else {
-                    checkDialog(reservationListDTO);
-                }
-
-                Log.i("RESERVATION_LIST_FLAG", flag);
-
-//                if (flag.equals("true")){
-//                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bodyShopDTO.getBodyshop_no(), reservationListDTO.getReservation_no(), reservationListDTO.getRepaired_time(), reservationListDTO.getRepaired_person(), handler);
-//                    Thread thread = new Thread(changeReservationRunnable);
-//                    thread.start();
-//                }
             }
         });
 
     }
 
-    public void makeDialog(final ReservationListDTO reservationListDTO, final BodyShopDTO bDTO) {
-        final EditText personname = new EditText(getApplicationContext());
-        personname.setSingleLine(true);
-        final TextView day = new TextView(getApplicationContext());
-
-        long now2 = System.currentTimeMillis();
-        final Date date2 = new Date(now2);
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        final AlertDialog.Builder alert = new AlertDialog.Builder(ReservationStatusActivity.this);
-        alert.setTitle(reservationListDTO.getMember_mname() + " 님의 차량 수리 확인");
-        Log.i("나와라 예약 넘버여", reservationListDTO.getMember_mname());
-        alert.setMessage(sdf.format(date2));
-        alert.setView(personname);
-        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                final ImageView repair_status = (ImageView)findViewById(R.id.repair_status);
-                if (personname.getText().toString().length()!=0){
-                    // 채우세요 하는 다이어로드 띄우기
-                    flag = "true";
-                    repair_t = sdf.format(date2);
-                    repair_p = personname.getText().toString();
-                    reservation_n = reservationListDTO.getReservation_no();
-                    Log.i("SECOND_ChangeR", "FALSE");
-                    Log.i("SECOND_ChangeR", "데이터 변경 합니다.");
-                    Log.i("RESERVATION_LIST_FLAG", repair_p);
-                    Log.i("RESERVATION_LIST_FLAG", repair_t);
-                    Log.i("RESERVATION_LIST_FLAG", repair_t);
-                    Log.i("RESERVATION_LIST_FLAG", reservationListDTO.getReservation_no());
-
-                    ChangeReservationRunnable changeReservationRunnable = new ChangeReservationRunnable(bDTO.getBodyshop_no(), reservation_n, repair_t, repair_p);
-                    Thread thread = new Thread(changeReservationRunnable);
-                    thread.start();
-
-                    dialog.dismiss();
-                } else {
-                    flag = "false";
-//                    Log.i("flag", flag);
-                    dialog.dismiss();   //닫기
-                }
-            }
-        });
-        alert.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();   //닫기
-            }
-        });
-        alert.show();
-    }
-
-    public void checkDialog(ReservationListDTO reservationListDTO) {
-//        final List<String> listItems = new ArrayList<>();
-//        listItems.add(reservationListDTO.getRepaired_time());
-//        listItems.add(reservationListDTO.getRepaired_person());
-//        final CharSequence[] items = listItems.toArray(new String[ listItems.size()]);
-
-        final TextView car = (TextView)findViewById(R.id.repair_car);
-        final TextView time = (TextView)findViewById(R.id.repair_time);
-        final TextView name = (TextView)findViewById(R.id.repair_name);
-
-
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(ReservationStatusActivity.this);
-        alert.setTitle(reservationListDTO.getMember_mname() + " 님의 수리 확인");
-//        alert.setItems(items, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//
-//            }
-//        });
-        alert.setView(R.layout.repair_check);
-        car.setText(reservationListDTO.getCar_type() + " ( " + reservationListDTO.getCar_id() + " ) ");
-        time.setText(reservationListDTO.getRepaired_time());
-        name.setText(reservationListDTO.getRepaired_person());
-
-        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();     //닫기
-            }
-        });
-        alert.show();
-    }
 }

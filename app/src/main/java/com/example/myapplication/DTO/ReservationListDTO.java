@@ -10,6 +10,7 @@ public class ReservationListDTO implements Parcelable {
     String key;
     String key_expire_time;
     String member_mname;
+    String member_no;
     String car_type;
     String car_id;
     String reservation_time;
@@ -19,11 +20,12 @@ public class ReservationListDTO implements Parcelable {
     public ReservationListDTO() {
     }
 
-    public ReservationListDTO(String reservation_no, String key, String key_expire_time, String member_mname, String car_type, String car_id, String reservation_time, String repaired_time, String repaired_person) {
+    public ReservationListDTO(String reservation_no, String key, String key_expire_time, String member_mname, String member_no, String car_type, String car_id, String reservation_time, String repaired_time, String repaired_person) {
         this.reservation_no = reservation_no;
         this.key = key;
         this.key_expire_time = key_expire_time;
         this.member_mname = member_mname;
+        this.member_no = member_no;
         this.car_type = car_type;
         this.car_id = car_id;
         this.reservation_time = reservation_time;
@@ -36,6 +38,7 @@ public class ReservationListDTO implements Parcelable {
         key = in.readString();
         key_expire_time = in.readString();
         member_mname = in.readString();
+        member_no = in.readString();
         car_type = in.readString();
         car_id = in.readString();
         reservation_time = in.readString();
@@ -127,6 +130,14 @@ public class ReservationListDTO implements Parcelable {
         this.repaired_person = repaired_person;
     }
 
+    public String getMember_no() {
+        return member_no;
+    }
+
+    public void setMember_no(String member_no) {
+        this.member_no = member_no;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -138,6 +149,7 @@ public class ReservationListDTO implements Parcelable {
         dest.writeString(key);
         dest.writeString(key_expire_time);
         dest.writeString(member_mname);
+        dest.writeString(member_no);
         dest.writeString(car_type);
         dest.writeString(car_id);
         dest.writeString(reservation_time);

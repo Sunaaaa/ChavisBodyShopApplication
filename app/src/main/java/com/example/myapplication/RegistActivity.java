@@ -73,7 +73,7 @@ public class RegistActivity extends AppCompatActivity {
 //        // 접속할 서버 주소 (이클립스에서 android.jsp 실행시 웹브라우저 주소)
 
             try {
-                URL url = new URL("http://70.12.115.57:9090/TestProject/bodyshoplogin");
+                URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/regist.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -81,12 +81,21 @@ public class RegistActivity extends AppCompatActivity {
                 conn.setRequestProperty("charset", "utf-8");
                 OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
 
-                sendMsg = "name=" + resname + "&pw=" + respw + "&address=" + resaddress;
+                Map<String, String> map = new HashMap<String, String>();
 
-                Log.i("msi", sendMsg);
+                map.put("name", resname);
+                map.put("pw", respw);
+                map.put("address", resaddress);
 
-                osw.write(sendMsg);
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(map);
+
+
+                Log.i("msi", "가랏 데이터 : " + json);
+
+                osw.write(json);
                 osw.flush();
+
 
                 String input = "";
                 String result = "";
@@ -105,7 +114,6 @@ public class RegistActivity extends AppCompatActivity {
                 bundle.putString("result", result);
                 Message message = new Message();
                 message.setData(bundle);
-
 
                 br.close();
                 conn.disconnect();
@@ -500,7 +508,7 @@ public class RegistActivity extends AppCompatActivity {
                 Bundle bundle = msg.getData();
                 String result = bundle.getString("result");
                 if (result.equals("SUCCUESS")) {
-                    registSuccessDialog();
+                    registSuccessDialog(result);
 
                 } else {
                     makeDialog();
@@ -521,41 +529,9 @@ public class RegistActivity extends AppCompatActivity {
                     fillDataDialog();
 
                 } else {
-//                    RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
-//                    Thread t = new Thread(mRegistRunnable);
-//                    t.start();
-                    try {
-                        Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
-                            public void run() {
-                                try {
-                                    String result = "";
-                                    result = sendPost(res_name_ET.getText().toString(), reg_pw_ET.getText().toString(), address);
-                                    Log.i("LOGIN", result);
-
-                                    if (!result.equals("SUCCESS")) {
-                                        makeDialog();
-                                    } else {
-                                        Intent intent = new Intent();
-                                        ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
-                                        intent.setComponent(componentName);
-                                        startActivity(intent);
-                                        Log.i("REGIST__", "회원가입 성공!!");
-                                    }
-                                } catch (Exception e) {
-                                    Log.i("REGIST__", e.toString());
-                                }
-                            }
-                        };
-                        wThread.start();
-
-                        try {
-                            wThread.join();
-                        } catch (Exception e) {
-                            Log.i("REGIST__", e.toString());
-                        }
-                    } catch (Exception e) {
-                        Log.i("REGIST__", e.toString());
-                    }
+                    RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
+                    Thread t = new Thread(mRegistRunnable);
+                    t.start();
                 }
             }
         });
@@ -588,18 +564,19 @@ public class RegistActivity extends AppCompatActivity {
     }
 
     // 회원 가입 성공
-    public void registSuccessDialog() {
+    public void registSuccessDialog(String result) {
         AlertDialog.Builder alert = new AlertDialog.Builder(RegistActivity.this);
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent();
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
-                dialog.dismiss();     //닫기
                 startActivity(intent);
+                dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("회원가입이 완료되었습니다." + "\n" + " 로그인 페이지로 이동합니다.");
+        alert.setMessage("아이디 " + result + " 로 회원가입이 완료되었습니다." + "\n" + " 로그인 페이지로 이동합니다.");
+
         alert.show();
     }
 
@@ -623,7 +600,7 @@ public class RegistActivity extends AppCompatActivity {
 
         map.put("name", name);
         map.put("pw", pw);
-        map.put("addredd", address);
+        map.put("address", address);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);

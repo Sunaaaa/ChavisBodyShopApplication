@@ -94,7 +94,7 @@ public class ReservationAdapter extends BaseAdapter {
             Log.i("DTO", "이쁘게 다 꾸몄네유~~~");
 
         } catch (Exception e) {
-            Log.i("LOG_KAKAOBOOK_ERROR", e.toString());
+            Log.i("Adapter ERROR_", e.toString());
         }
 
         return view;

@@ -67,7 +67,9 @@ public class LoginActivity extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.i("LoginAcitivty", "로그인 버튼 눌렀다. ");
                 try {
+                    Log.i("LoginAcitivty", "여기서 죽니");
                     Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
                         public void run() {
                             try {
@@ -77,6 +79,13 @@ public class LoginActivity extends AppCompatActivity {
                                 if (dto.getBodyshop_id().equals("NO")) {
                                     makeDialog();
                                 } else {
+
+                                    // 서비스 실행
+                                    Intent i = new Intent();
+                                    ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+                                    i.setComponent(sComponentName);
+                                    startService(i);
+
                                     Intent intent = new Intent();
                                     ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
                                     intent.setComponent(componentName);
@@ -86,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.i("msi", "로그인 성공!!");
                                 }
                             } catch (Exception e) {
-                                Log.i("msi", e.toString());
+                                Log.i("LoginAcitivty_HERE", e.toString());
                             }
                         }
                     };
@@ -121,12 +130,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private BodyShopDTO sendPost(String id, String pw) throws Exception {
 
+        Log.i("sendPost", "sendPost 들어왔다 1" );
+
         String receivedata;
         String sendMsg;
 
 //        URL url = new URL("http://70.12.115.57:9090/TestProject/blogin.do");
         URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/login.do");
 //        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
+
+        Log.i("sendPost", "sendPost 들어왔다 2" );
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -142,8 +155,11 @@ public class LoginActivity extends AppCompatActivity {
         map.put("id", id);
         map.put("pw", pw);
 
+        Log.i("sendPost", "sendPost 들어왔다 3" );
+
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);
+
 
         Log.i("msi", "가랏 데이터 : " + json);
 
@@ -165,6 +181,8 @@ public class LoginActivity extends AppCompatActivity {
         BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {
         });
         Log.i("LOGIN", myObject.getBodyshop_id());
+
+        // 자동 로그인 등록
         SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
