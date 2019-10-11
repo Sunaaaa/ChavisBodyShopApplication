@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.myapplication.DTO.BodyShopDTO;
 import com.example.myapplication.DTO.ReservationListDTO;
@@ -523,16 +524,18 @@ public class RegistActivity extends AppCompatActivity {
 
                 name = res_name_ET.getText().toString();
                 pw = reg_pw_ET.getText().toString();
-                address = choice_do + " " + choice_se + " " + detailAddress_ET.getText().toString();
+                address = choice_do + "/" + choice_se + "/" + detailAddress_ET.getText().toString();
+                Log.i("asdasda", address);
+                Toast.makeText(getApplicationContext(), address, Toast.LENGTH_SHORT).show();
 
-                if (name.length()==0 || pw.length()==0 || choice_se.length()==0 || choice_do.length()==0 || !pw.equals(reg_pwCk_ET.getText().toString())){
-                    fillDataDialog();
-
-                } else {
-                    RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
-                    Thread t = new Thread(mRegistRunnable);
-                    t.start();
-                }
+//                if (name.length()==0 || pw.length()==0 || choice_se.length()==0 || choice_do.length()==0 || !pw.equals(reg_pwCk_ET.getText().toString())){
+//                    fillDataDialog();
+//
+//                } else {
+//                    RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
+//                    Thread t = new Thread(mRegistRunnable);
+//                    t.start();
+//                }
             }
         });
     }
