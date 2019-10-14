@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:fontFamily="@font/listtext"
                     android:id="@+id/reservation_time"
                     android:text="2019-10-04 18:00"
                     android:textColor="@android:color/black"
@@ -41,6 +42,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:fontFamily="@font/listtext"
                     android:id="@+id/member_mname"
                     android:text="홍길동"
                     android:textSize="25dp"
@@ -49,6 +51,7 @@
                     android:layout_height="wrap_content"/>
 
                 <TextView
+                    android:fontFamily="@font/listtext"
                     android:text="님"
                     android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
@@ -62,18 +65,20 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:fontFamily="@font/listtext"
                     android:id="@+id/cartype"
                     android:textSize="20dp"
-                    android:text="소나타"
+                    android:text="차 종"
                     android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
                 <TextView
+                    android:fontFamily="@font/listtext"
                     android:id="@+id/carid"
                     android:textColor="@android:color/black"
                     android:textSize="20dp"
-                    android:text="(12가 1234)"
+                    android:text="차 번호"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 

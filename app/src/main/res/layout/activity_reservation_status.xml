@@ -14,6 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:fontFamily="@font/listtext"
             android:padding="10px"
             android:id="@+id/shop_name"
             android:text="정비소 이름"
@@ -24,6 +25,7 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:fontFamily="@font/listtext"
             android:padding="10px"
             android:text="예약 현황"
             android:textStyle="bold"
@@ -40,17 +42,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:gravity="right"
-            android:padding="10px"
-            android:id="@+id/today"
-            android:text="오늘 날짜"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:textSize="15dp"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
+            <TextView
+                android:gravity="right"
+                android:padding="10px"
+                android:id="@+id/today"
+                android:text="오늘 날짜"
+                android:fontFamily="@font/listtext"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_gravity="right"
             android:gravity="right"
@@ -59,8 +68,8 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:gravity="right"
                 android:src="@drawable/hammer"
+                android:layout_marginRight="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -68,10 +77,11 @@
                 android:gravity="right"
                 android:padding="10px"
                 android:text="다른 날짜 예약 보기"
+                android:fontFamily="@font/listtext"
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:textSize="12dp"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
         </LinearLayout>

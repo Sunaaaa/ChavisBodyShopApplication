@@ -260,11 +260,4 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        String result = intent.getStringExtra("repairedResult");
-        Log.i("repairedResult", result);
-
-    }
 }

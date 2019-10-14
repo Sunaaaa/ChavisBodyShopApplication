@@ -148,6 +148,15 @@ public class CarKeyActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String result = intent.getStringExtra("repairedResult");
+        Log.i("repairedResult", result);
+
+    }
+
     public void makeDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(CarKeyActivity.this);
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
