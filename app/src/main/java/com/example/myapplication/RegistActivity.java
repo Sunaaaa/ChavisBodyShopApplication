@@ -48,7 +48,7 @@ public class RegistActivity extends AppCompatActivity {
     EditText res_name_ET, reg_pw_ET, detailAddress_ET, reg_pwCk_ET;
     ArrayAdapter<CharSequence> adspin1, adspin2;
     Spinner spin1, spin2;
-    String choice_do = "", choice_se = "", address = "";
+    String choice_do = "", choice_se = "", address = "", result = "";
     ImageView imageView;
     Button doregist;
 
@@ -74,7 +74,7 @@ public class RegistActivity extends AppCompatActivity {
 //        // 접속할 서버 주소 (이클립스에서 android.jsp 실행시 웹브라우저 주소)
 
             try {
-                URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/regist.do");
+                URL url = new URL("http://70.12.115.63:9090/Chavis/Bodyshop/add.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -528,6 +528,43 @@ public class RegistActivity extends AppCompatActivity {
                 Log.i("asdasda", address);
                 Toast.makeText(getApplicationContext(), address, Toast.LENGTH_SHORT).show();
 
+
+                try {
+                    Log.i("LoginAcitivty", "여기서 죽니");
+                    Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
+                        public void run() {
+                            try {
+                                result = sendPost(name, pw, address);
+
+                                if (result.equals("SUCCESS")) {
+                                    makeDialog();
+                                } else {
+                                    Intent intent = new Intent();
+                                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
+                                    intent.setComponent(componentName);
+                                    startActivity(intent);
+                                    Log.i("msi", "회원가입 성공!!");
+                                }
+                            } catch (Exception e) {
+                                Log.i("RegistAcitivty_HERE", e.toString());
+                            }
+                        }
+                    };
+                    wThread.start();
+
+                    try {
+                        wThread.join();
+                    } catch (Exception e) {
+                        Log.i("msi", "이상이상22");
+                    }
+                } catch (Exception e) {
+                    Log.i("msi", e.toString());
+                }
+
+//                RegistRunnable registRunnable = new RegistRunnable(name, pw, address, handler);
+//                Thread t = new Thread(registRunnable);
+//                t.start();
+
 //                if (name.length()==0 || pw.length()==0 || choice_se.length()==0 || choice_do.length()==0 || !pw.equals(reg_pwCk_ET.getText().toString())){
 //                    fillDataDialog();
 //
@@ -586,14 +623,14 @@ public class RegistActivity extends AppCompatActivity {
 
     private String sendPost(String name, String pw, String address) throws Exception {
 
-        String receiveData;
+        String receiveData = "";
 
-        URL url = new URL("http://70.12.115.52:9090/Bodyshop/login.do");
+        URL url = new URL("http://70.12.115.63:9090/Chavis/Bodyshop/regist.do");
 //        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Connection", "Keep-Alive");
         conn.setRequestProperty("charset", "utf-8");
         OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
@@ -613,15 +650,16 @@ public class RegistActivity extends AppCompatActivity {
         osw.write(json);
         osw.flush();
 
-
-        Log.i("REGIST__", "222");
+        Log.i("REGIST__2", "222");
         int responseCode = conn.getResponseCode();
+        Log.i("REGIST__3", responseCode+ "");
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
+        Log.i("REGIST__3", receiveData);
         receiveData = response.toString();
         in.close();
         Log.i("REGIST__", receiveData);

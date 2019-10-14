@@ -126,7 +126,7 @@ public class CarKeyActivity extends AppCompatActivity {
                                     repair_list = repair_list.substring(0, repair_list.length()-1);
                                     String repaired_time = sdf.format(date);
 //                                    String repaired_person = editText.getText().toString();
-                                    repaired_info = reservationListDTO.getReservation_no() + "/" + repaired_time + "/" + repaired_person;
+                                    repaired_info = reservationListDTO.getReservation_no() + "/" + repaired_time + "/" + editText.getText().toString();
                                     Log.i("수리 목록 (맨 뒤에 '#' 빼기) ", repair_list);
                                     bodyShopService.clientToServer("RepairFinish", repair_list + "/" + repaired_info);
                                 }

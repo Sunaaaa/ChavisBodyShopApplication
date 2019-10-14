@@ -7,6 +7,7 @@ package com.example.myapplication;
         import android.os.Binder;
         import android.os.Bundle;
         import android.os.IBinder;
+        import android.os.Parcelable;
         import android.util.Log;
 
         import com.example.myapplication.DTO.BodyShopDTO;
@@ -79,8 +80,13 @@ public class BodyShopService extends Service {
                     if (msg[0].equals("Key")) {
                         Log.i("BodyShopService_KEY", msg[1]);
                         blockingQueue.add("Key#" + msg[1]);
-                    } else if (msg[0].equals("asd")){
-
+                    } else if (msg[0].equals("RepairFinishResult")){
+                        receiveIntent = new Intent();
+                        ComponentName componentName = new ComponentName("ReservationStatusActivity", "ReservationStatusActivity.ReservationStatusActivity");
+                        Log.i("BodyShopService_Result", msg[1]);
+                        receiveIntent.putExtra("repairedResult", msg[1]);
+                        receiveIntent.setComponent(componentName);
+                        startActivity(receiveIntent);
                     }
 
                 }
