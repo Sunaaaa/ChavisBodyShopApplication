@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,8 +52,9 @@ public class ReservationStatusActivity extends AppCompatActivity {
     private BackPressCloseHandler backPressCloseHandler;
     SharedPreferences preferences;
     String flag = "", repair_t, repair_p, reservation_n;
+    ImageView btn_getNewList;
 
-    class MyReservationRunnable implements Runnable{
+    class MyReservationRunnable implements Runnable {
         private String id;
         private Handler handler;
 
@@ -97,16 +99,15 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 }
 
                 receivedata = response.toString();
-                ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
+                ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {
+                });
                 in.close();
                 Log.i("ReservationList__FIRST", receivedata);
-                Log.i("ReservationList__FIRST", myObject.get(1).getMember_mname());
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("reservation_list", myObject);
 
                 Message message = new Message();
                 message.setData(bundle);
-                Log.i("ReservationList__FIRST", String.valueOf(myObject.size()));
 
                 handler.sendMessage(message);
 
@@ -117,7 +118,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
     }
 
 
-    class ChangeReservationRunnable implements Runnable{
+    class ChangeReservationRunnable implements Runnable {
         private String bodyshop_no;
         private String reservation_no;
         private String rtime;
@@ -207,11 +208,11 @@ public class ReservationStatusActivity extends AppCompatActivity {
         Date date = new Date(now);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        TextView shop_name = (TextView)findViewById(R.id.shop_name);
-        TextView today = (TextView)findViewById(R.id.today);
+        TextView shop_name = (TextView) findViewById(R.id.shop_name);
+        TextView today = (TextView) findViewById(R.id.today);
         today.setText(sdf.format(date));
 
-        listView = (ListView)findViewById(R.id.reservation_listview);
+        listView = (ListView) findViewById(R.id.reservation_listview);
 
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         String myObject = preferences.getString("myObject", "NO");
@@ -224,20 +225,30 @@ public class ReservationStatusActivity extends AppCompatActivity {
         shop_name.setText(bodyShopDTO.getBodyshop_name());
         final ReservationAdapter adapter = new ReservationAdapter();
 
-        handler = new Handler(){
+        handler = new Handler() {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 Bundle bundle = msg.getData();
                 ArrayList<ReservationListDTO> result = bundle.getParcelableArrayList("reservation_list");
 
-                for (ReservationListDTO dto : result){
-                    Log.i("FIRST", dto.getMember_mname());
-                    adapter.addItem(dto);
+                TextView nolist = (TextView) findViewById(R.id.nolist);
+                if (result.size() == 0) {
+                    nolist.setVisibility(View.VISIBLE);
+                    Log.i("FIRST", "데이터 없음");
+                } else {
+                    nolist.setVisibility(View.GONE);
+                    Log.i("FIRST", "데이터 있음");
+
+                    adapter.removeAllList();
+                    for (ReservationListDTO dto : result) {
+                        adapter.addItem(dto);
+                    }
+
                 }
 
-                adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
         };
 
@@ -248,13 +259,22 @@ public class ReservationStatusActivity extends AppCompatActivity {
         thread.start();
         Log.i("FIRST", "쓰레드 스타트 함!");
 
+        btn_getNewList = (ImageView)findViewById(R.id.btn_getNewList);
+        btn_getNewList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
+                Thread thread = new Thread(myReservationRunnable);
+                thread.start();
+            }
+        });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), adapter.getItem(position).getMember_mname(), Toast.LENGTH_SHORT).show();
                 ReservationListDTO reservationListDTO = adapter.getItem(position);
 
-                Log.i("reservation_item", reservationListDTO.getMember_mname());
                 Intent intent = new Intent();
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.CarKeyActivity");
                 intent.setComponent(componentName);

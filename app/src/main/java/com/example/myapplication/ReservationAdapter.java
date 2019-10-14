@@ -27,6 +27,10 @@ public class ReservationAdapter extends BaseAdapter {
 
     }
 
+    public void removeAllList(){
+        list.clear();
+    }
+
     public void addItem(ReservationListDTO dto){
         list.add(dto);
     }

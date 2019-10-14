@@ -530,11 +530,12 @@ public class RegistActivity extends AppCompatActivity {
 
 
                 try {
-                    Log.i("LoginAcitivty", "여기서 죽니");
+                    Log.i("RegistAcitivty", "1");
                     Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
                         public void run() {
                             try {
                                 result = sendPost(name, pw, address);
+                                Log.i("RegistAcitivty", "1");
 
                                 if (result.equals("SUCCESS")) {
                                     makeDialog();
@@ -625,7 +626,7 @@ public class RegistActivity extends AppCompatActivity {
 
         String receiveData = "";
 
-        URL url = new URL("http://70.12.115.63:9090/Chavis/Bodyshop/regist.do");
+        URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/regist.do");
 //        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
