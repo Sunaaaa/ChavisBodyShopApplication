@@ -82,7 +82,7 @@ public class BodyShopService extends Service {
                         blockingQueue.add("Key#" + msg[1]);
                     } else if (msg[0].equals("RepairFinishResult")){
                         receiveIntent = new Intent();
-                        ComponentName componentName = new ComponentName("ReservationStatusActivity", "ReservationStatusActivity.ReservationStatusActivity");
+                        ComponentName componentName = new ComponentName("ReservationStatusActivity", "ReservationStatusActivity.CarKeyActivity");
                         Log.i("BodyShopService_Result", msg[1]);
                         receiveIntent.putExtra("repairedResult", msg[1]);
                         receiveIntent.setComponent(componentName);

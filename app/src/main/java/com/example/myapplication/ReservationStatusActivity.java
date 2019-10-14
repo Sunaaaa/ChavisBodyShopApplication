@@ -47,6 +47,7 @@ import static java.security.AccessController.getContext;
 
 public class ReservationStatusActivity extends AppCompatActivity {
 
+    private BackPressCloseHandler backPressCloseHandler;
     SharedPreferences preferences;
     String flag = "", repair_t, repair_p, reservation_n;
 
@@ -195,12 +196,14 @@ public class ReservationStatusActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         final ListView listView;
 
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reservation_status);
+
+        backPressCloseHandler = new BackPressCloseHandler(this);
+
         long now = System.currentTimeMillis();
         Date date = new Date(now);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reservation_status);
 
         TextView shop_name = (TextView)findViewById(R.id.shop_name);
         TextView today = (TextView)findViewById(R.id.today);
@@ -260,4 +263,9 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+    }
 }
