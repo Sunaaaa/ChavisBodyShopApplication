@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -109,7 +110,6 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
                 handler.sendMessage(message);
 
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -191,6 +191,8 @@ public class ReservationStatusActivity extends AppCompatActivity {
         }
     }
 
+    BodyShopDTO bodyShopDTO;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,12 +218,13 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
         Gson gson = new Gson();
         final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
+//        final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
 
         Log.i("FIRST", bodyShopDTO.getBodyshop_name());
         shop_name.setText(bodyShopDTO.getBodyshop_name());
         final ReservationAdapter adapter = new ReservationAdapter();
 
-        final Handler handler = new Handler(){
+        handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
@@ -256,7 +259,8 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.CarKeyActivity");
                 intent.setComponent(componentName);
                 intent.putExtra("reservation_info", reservationListDTO);
-                startActivity(intent);
+                startActivityForResult(intent, 5050);
+                // startActivity(intent);
 
             }
         });
@@ -267,5 +271,14 @@ public class ReservationStatusActivity extends AppCompatActivity {
     public void onBackPressed() {
         // super.onBackPressed();
         backPressCloseHandler.onBackPressed();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
+        Thread thread = new Thread(myReservationRunnable);
+        thread.start();
     }
 }

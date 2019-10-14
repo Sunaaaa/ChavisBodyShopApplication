@@ -24,7 +24,9 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/carkey_name"
                     android:text="이수연"
+                    android:fontFamily="@font/listtextbold"
                     android:textSize="25dp"
                     android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
@@ -33,6 +35,7 @@
                 <TextView
                     android:text="님"
                     android:textSize="15dp"
+                    android:fontFamily="@font/listtext"
                     android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -47,6 +50,7 @@
 
                 <TextView
                     android:text="팬텀 8 세대 "
+                    android:id="@+id/carkey_type"
                     android:textSize="20dp"
                     android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
@@ -60,6 +64,7 @@
                     android:layout_height="wrap_content"/>
                 <TextView
                     android:text="13가 1234"
+                    android:id="@+id/carkey_num"
                     android:textSize="20dp"
                     android:textColor="@android:color/black"
                     android:layout_width="wrap_content"
@@ -113,9 +118,11 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/pname"
                     android:textColor="@android:color/black"
                     android:text="정비사 명 : "
-                    android:layout_marginRight="10dp"
+                    android:fontFamily="@font/listtextbold"
+                    android:layout_marginRight="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -124,6 +131,7 @@
                     android:layout_weight="1"
                     android:id="@+id/repaired_personname"
                     android:hint="홍길동"
+                    android:fontFamily="@font/listtext"
                     android:padding="20dp"
                     android:textColorHint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
@@ -141,7 +149,8 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:text="뭘까"
+                    android:text="예약 목록 보기"
+                    android:id="@+id/btn"
                     android:background="@drawable/selector_btn"
                     android:layout_margin="20dp"
                     android:layout_gravity="center"

@@ -82,10 +82,13 @@ public class BodyShopService extends Service {
                         blockingQueue.add("Key#" + msg[1]);
                     } else if (msg[0].equals("RepairFinishResult")){
                         receiveIntent = new Intent();
-                        ComponentName componentName = new ComponentName("ReservationStatusActivity", "ReservationStatusActivity.CarKeyActivity");
+                        ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.CarKeyActivity");
                         Log.i("BodyShopService_Result", msg[1]);
                         receiveIntent.putExtra("repairedResult", msg[1]);
                         receiveIntent.setComponent(componentName);
+                        receiveIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        receiveIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(receiveIntent);
                     }
 

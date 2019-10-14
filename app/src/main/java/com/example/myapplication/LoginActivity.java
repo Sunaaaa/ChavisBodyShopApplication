@@ -151,7 +151,6 @@ public class LoginActivity extends AppCompatActivity {
 
         Map<String, String> map = new HashMap<String, String>();
 
-
         map.put("id", id);
         map.put("pw", pw);
 

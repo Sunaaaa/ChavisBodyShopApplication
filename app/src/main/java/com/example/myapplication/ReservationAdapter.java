@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.myapplication.DTO.BodyShopDTO;
 import com.example.myapplication.DTO.ReservationListDTO;
 
@@ -48,6 +50,7 @@ public class ReservationAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
 
         final Context context = viewGroup.getContext();
+        final RecyclerView.ViewHolder viewHolder;
 
         // 출력할 View 객체를 생성
         if (view == null) {
@@ -87,9 +90,9 @@ public class ReservationAdapter extends BaseAdapter {
             }
             String repair_s = dto.getRepaired_time();
             if (repair_s.equals("NO")){
-                key_status.setImageResource(R.drawable.ing);
+                repair_status.setImageResource(R.drawable.ing);
             } else {
-                key_status.setImageResource(R.drawable.done);
+                repair_status.setImageResource(R.drawable.done);
             }
             Log.i("DTO", "이쁘게 다 꾸몄네유~~~");
 
