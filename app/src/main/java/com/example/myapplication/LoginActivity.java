@@ -160,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         String sendMsg;
 
 //        URL url = new URL("http://70.12.115.57:9090/TestProject/blogin.do");
-        URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/login.do");
+        URL url = new URL("http://70.12.115.63:9090/Chavis/Bodyshop/login.do");
 //        URL url = new URL("http://70.12.115.73:9090/Chavis/Member/view.do");  // 한석햄
 
         Log.i("sendPost", "sendPost 들어왔다 2" );

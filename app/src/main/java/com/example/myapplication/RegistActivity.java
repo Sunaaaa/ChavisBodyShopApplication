@@ -140,7 +140,7 @@ public class RegistActivity extends AppCompatActivity {
         doregist = (Button)findViewById(R.id.doregist);
         doregist.setEnabled(false);
 
-        adspin1 = ArrayAdapter.createFromResource(this, R.array.spinner_do, android.R.layout.simple_spinner_dropdown_item);
+        adspin1 = ArrayAdapter.createFromResource(this, R.array.spinner_do, R.layout.view_spinner_item);
         adspin1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin1.setAdapter(adspin1);
         spin1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -148,7 +148,7 @@ public class RegistActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (adspin1.getItem(position).equals("서울")) {
                     choice_do = "서울 특별시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_seoul, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_seoul, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -165,7 +165,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("인천")) {
                     choice_do = "인천 광역시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_incheon, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_incheon, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -182,7 +182,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("경기")) {
                     choice_do = "경기도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_gyeonggi, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_gyeonggi, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -199,7 +199,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("강원")) {
                     choice_do = "강원도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_kangwon, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_kangwon,R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -216,7 +216,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("대전")) {
                     choice_do = "대전 광역시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_daejeon, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_daejeon, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -233,7 +233,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("세종")) {
                     choice_do = "세종 특별 자치시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_sejong, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_sejong, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -250,7 +250,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("충남")) {
                     choice_do = "충청남도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_chungnam, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_chungnam, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -267,7 +267,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("충북")) {
                     choice_do = "충청북도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_chungbuk, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_chungbuk, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -284,7 +284,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("부산")) {
                     choice_do = "부산광역시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_busan, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_busan, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -301,7 +301,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("울산")) {
                     choice_do = "울산 광역시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_ulsan, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_ulsan, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -318,7 +318,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("경남")) {
                     choice_do = "경상남도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_gyeongnam, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_gyeongnam, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -335,7 +335,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("경북")) {
                     choice_do = "경상북도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_gyeongbuk, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_gyeongbuk, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -352,7 +352,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("대구")) {
                     choice_do = "대구 광역시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_daegu, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_daegu, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -369,7 +369,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("광주")) {
                     choice_do = "광주 광역시";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_kwangju, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_kwangju, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -386,7 +386,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("전남")) {
                     choice_do = "전라남도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_jeonnam, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_jeonnam, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -403,7 +403,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("전북")) {
                     choice_do = "전라북도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_jeonbuk, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_jeonbuk, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
@@ -420,7 +420,7 @@ public class RegistActivity extends AppCompatActivity {
                     });
                 } else if (adspin1.getItem(position).equals("제주")) {
                     choice_do = "제주도";
-                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_jeju, android.R.layout.simple_spinner_dropdown_item);
+                    adspin2 = ArrayAdapter.createFromResource(RegistActivity.this, R.array.spinner_do_jeju, R.layout.view_spinner_item);
                     adspin2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin2.setAdapter(adspin2);
 
