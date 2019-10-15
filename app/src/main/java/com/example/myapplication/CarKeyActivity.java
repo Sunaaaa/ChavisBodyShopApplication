@@ -15,8 +15,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,9 @@ public class CarKeyActivity extends AppCompatActivity {
         Intent intent2 = new Intent(CarKeyActivity.this, BodyShopService.class);
         bindService(intent2, conn, Context.BIND_ABOVE_CLIENT);
 
+        final InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.carkeylayout);
+
         editText = (EditText) findViewById(R.id.repaired_personname);
         carkey_name = (TextView) findViewById(R.id.carkey_name);
         carkey_type = (TextView) findViewById(R.id.carkey_type);
@@ -75,8 +80,18 @@ public class CarKeyActivity extends AppCompatActivity {
         carkey_type.setText(reservationListDTO.getCar_type());
         carkey_num.setText(reservationListDTO.getCar_id());
         editText = (EditText) findViewById(R.id.repaired_personname);
+
         btn_getKey = (Button) findViewById(R.id.btn_getKey);
         btn_repair_finish = (Button) findViewById(R.id.btn_repair_finish);
+        // editText가 아닌 다른 곳을 터치하면 키보드 숨기기 기능 발동
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            }
+        });
+
+
         btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override

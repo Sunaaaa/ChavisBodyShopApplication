@@ -44,12 +44,11 @@ import java.util.Map;
 
 public class RegistActivity extends AppCompatActivity {
 
-    String name = "", pw = "";
+    String name = "", pw = "", pwCk = "";
     EditText res_name_ET, reg_pw_ET, detailAddress_ET, reg_pwCk_ET;
     ArrayAdapter<CharSequence> adspin1, adspin2;
     Spinner spin1, spin2;
     String choice_do = "", choice_se = "", address = "", result = "";
-    ImageView imageView;
     Button doregist;
 
     class RegistRunnable implements Runnable {
@@ -135,10 +134,11 @@ public class RegistActivity extends AppCompatActivity {
         reg_pw_ET = (EditText) findViewById(R.id.reg_pw);
         reg_pwCk_ET = (EditText)findViewById(R.id.reg_pwCk);
         detailAddress_ET = (EditText) findViewById(R.id.detailAddress);
-        imageView = (ImageView)findViewById(R.id.ckImg);
+//        imageView = (ImageView)findViewById(R.id.ckImg);
         spin1 = (Spinner) findViewById(R.id.spinner);
         spin2 = (Spinner) findViewById(R.id.spinner2);
         doregist = (Button)findViewById(R.id.doregist);
+        doregist.setEnabled(false);
 
         adspin1 = ArrayAdapter.createFromResource(this, R.array.spinner_do, android.R.layout.simple_spinner_dropdown_item);
         adspin1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -443,6 +443,8 @@ public class RegistActivity extends AppCompatActivity {
 
             }
         });
+
+        Log.i("aaaaaaaaaaaaaaa", reg_pwCk_ET.getBackground() + "");
         reg_pw_ET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -452,11 +454,22 @@ public class RegistActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (reg_pwCk_ET.getText().length()!=0){
-                    if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
-                        imageView.setImageResource(R.drawable.ck);
-                    } else {
-                        imageView.setImageResource(R.drawable.nck);
+                    if (reg_pw_ET.getText().length()==0 ) {
+                        reg_pwCk_ET.setBackgroundResource(R.drawable.nopass);
+                        doregist.setEnabled(false);
                     }
+                    if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
+//                        imageView.setImageResource(R.drawable.ck);
+                        reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
+                        doregist.setEnabled(true);
+                    } else {
+//                        imageView.setImageResource(R.drawable.nck);
+                        reg_pwCk_ET.setBackgroundResource(R.drawable.nopass);
+                        doregist.setEnabled(false);
+                    }
+                } else {
+                    reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
+                    doregist.setEnabled(true);
                 }
             }
 
@@ -474,12 +487,26 @@ public class RegistActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
-                    imageView.setImageResource(R.drawable.ck);
+                if (reg_pwCk_ET.getText().length()!=0){
+                    if (reg_pw_ET.getText().length()==0 ) {
+                        reg_pwCk_ET.setBackgroundResource(R.drawable.nopass);
+                        doregist.setEnabled(false);
+                    }
+                    if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
+//                        imageView.setImageResource(R.drawable.ck);
+                        reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
+                        doregist.setEnabled(true);
+                        Log.i("aaaaaaaaaaaaaaa", reg_pwCk_ET.getBackground() + "");
+                    } else {
+//                        imageView.setImageResource(R.drawable.nck);
+                        reg_pwCk_ET.setBackgroundResource(R.drawable.nopass);
+                        doregist.setEnabled(false);
+                        Log.i("aaaaaaaaaaaaaaa", reg_pwCk_ET.getBackground() + "");
+                    }
                 } else {
-                    imageView.setImageResource(R.drawable.nck);
+                    reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
+                    doregist.setEnabled(true);
                 }
-
             }
 
             @Override
@@ -524,62 +551,59 @@ public class RegistActivity extends AppCompatActivity {
 
                 name = res_name_ET.getText().toString();
                 pw = reg_pw_ET.getText().toString();
+                pwCk = reg_pwCk_ET.getText().toString();
                 address = choice_do + "/" + choice_se + "/" + detailAddress_ET.getText().toString();
-                Log.i("asdasda", address);
-                Toast.makeText(getApplicationContext(), address, Toast.LENGTH_SHORT).show();
 
+                // 회원가입
+//                if (name.length() == 0 || pw.length() == 0 || address.length() == 0 || reg_pwCk_ET.getBackground().equals("android.graphics.drawable.GradientDrawable@f890348") ) {
+//                    fillDataDialog();
+//                }
 
-                try {
-                    Log.i("RegistAcitivty", "1");
-                    Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
-                        public void run() {
-                            try {
-                                result = sendPost(name, pw, address);
-                                Log.i("RegistAcitivty", "1");
-
-                                if (result.equals("SUCCESS")) {
-                                    makeDialog();
-                                } else {
-                                    Intent intent = new Intent();
-                                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
-                                    intent.setComponent(componentName);
-                                    startActivity(intent);
-                                    Log.i("msi", "회원가입 성공!!");
-                                }
-                            } catch (Exception e) {
-                                Log.i("RegistAcitivty_HERE", e.toString());
-                            }
-                        }
-                    };
-                    wThread.start();
-
+                if (name.length() == 0 ) {
+                    fillDataDialog("정비소 이름을 적어주세요.");
+                } else if (pw.length() == 0 ) {
+                    fillDataDialog("비밀번호를 적어주세요.");
+                } else if (pwCk.length() == 0 ) {
+                    fillDataDialog("비밀번호를 적어주세요.");
+                } else if (address.length() == 0 ) {
+                    fillDataDialog("주소를 적어주세요.");
+                } else {
                     try {
-                        wThread.join();
+                        Log.i("RegistAcitivty", "1");
+                        Thread wThread = new Thread() {      // UI 관련작업 아니면 Thread를 생성해서 처리해야 하는듯... main thread는 ui작업(손님접대느낌) 하느라 바쁨
+                            public void run() {
+                                try {
+                                    result = sendPost(name, pw, address);
+                                    Log.i("RegistAcitivty", "1");
+
+                                    if (result.equals("SUCCESS")) {
+                                        makeDialog();
+                                    } else {
+                                        registSuccessDialog(result);
+                                    }
+                                } catch (Exception e) {
+                                    Log.i("RegistAcitivty_HERE", e.toString());
+                                }
+                            }
+                        };
+                        wThread.start();
+
+                        try {
+                            wThread.join();
+                        } catch (Exception e) {
+                            Log.i("RegistAcitivty_Thread",  e.toString());
+                        }
                     } catch (Exception e) {
-                        Log.i("msi", "이상이상22");
+                        Log.i("RegistAcitivty_Thread",  e.toString());
                     }
-                } catch (Exception e) {
-                    Log.i("msi", e.toString());
                 }
 
-//                RegistRunnable registRunnable = new RegistRunnable(name, pw, address, handler);
-//                Thread t = new Thread(registRunnable);
-//                t.start();
-
-//                if (name.length()==0 || pw.length()==0 || choice_se.length()==0 || choice_do.length()==0 || !pw.equals(reg_pwCk_ET.getText().toString())){
-//                    fillDataDialog();
-//
-//                } else {
-//                    RegistRunnable mRegistRunnable = new RegistRunnable(name, pw, address, handler);
-//                    Thread t = new Thread(mRegistRunnable);
-//                    t.start();
-//                }
             }
         });
     }
 
     // 회원 가입 실패
-    public void fillDataDialog() {
+    public void fillDataDialog(String a) {
         AlertDialog.Builder alert = new AlertDialog.Builder(RegistActivity.this);
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
@@ -587,7 +611,7 @@ public class RegistActivity extends AppCompatActivity {
                 dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("회원가입 정보 다시 확인하세요.");
+        alert.setMessage(a);
         alert.show();
     }
 
@@ -612,7 +636,9 @@ public class RegistActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent();
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
+                intent.setComponent(componentName);
                 startActivity(intent);
+                Log.i("msi", "회원가입 성공!!");
                 dialog.dismiss();     //닫기
             }
         });

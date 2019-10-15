@@ -21,6 +21,7 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:fontFamily="@font/listtextbold"
                 android:layout_margin="50px"
                 android:layout_marginTop="50dp"
                 android:text="회원 가입"
@@ -50,7 +51,9 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:hint="정비소 이름"
+                    android:background="@drawable/address_taeduri"
+                    android:fontFamily="@font/listtext"
+                    android:hint="정비소 이름 ( 예> 행복 정비소)"
                     android:textColorHint="@android:color/darker_gray"
                     android:id="@+id/reg_name"
                     android:layout_width="0dp"
@@ -59,8 +62,6 @@
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
                     android:padding="15dp"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="18dp"
                     android:layout_weight="2" />
 
             </LinearLayout>
@@ -74,7 +75,9 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:background="@drawable/pass"
                     android:hint="비밀번호"
+                    android:fontFamily="@font/listtext"
                     android:password="true"
                     android:textColorHint="@android:color/darker_gray"
                     android:id="@+id/reg_pw"
@@ -85,8 +88,7 @@
                     android:layout_marginRight="40dp"
                     android:padding="15dp"
                     android:paddingTop="20dp"
-                    android:paddingBottom="18dp"
-                    android:layout_weight="2" />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
@@ -98,7 +100,9 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:background="@drawable/pass"
                     android:hint="비밀번호 확인"
+                    android:fontFamily="@font/listtext"
                     android:password="true"
                     android:textColorHint="@android:color/darker_gray"
                     android:id="@+id/reg_pwCk"
@@ -109,54 +113,78 @@
                     android:layout_marginRight="40dp"
                     android:padding="15dp"
                     android:paddingTop="20dp"
-                    android:paddingBottom="18dp"
-                    android:layout_weight="2" />
+                    android:layout_weight="1" />
 
-                <ImageView
-                    android:id="@+id/ckImg"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+<!--                <ImageView-->
+<!--                    android:id="@+id/ckImg"-->
+<!--                    android:adjustViewBounds="true"-->
+<!--                    android:scaleType="fitCenter"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"/>-->
 
             </LinearLayout>
 
             <LinearLayout
                 android:gravity="center"
-                android:layout_weight="1"
-                android:padding="20dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="30dp"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_gravity="center_horizontal"
-                android:weightSum="1">
+                android:layout_height="wrap_content">
 
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:id="@+id/spinner"
-                    android:layout_weight="0.2" />
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:id="@+id/spinner2"
-                    android:layout_weight="0.2" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <EditText
-                    android:hint="상세 주소"
-                    android:id="@+id/detailAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textColorHint="@android:color/darker_gray"
-                    android:textColor="@android:color/black"
-                    android:padding="15dp"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="18dp"
-                    android:layout_weight="0.6" />
+                    <Spinner
+                        android:layout_marginLeft="40dp"
+                        android:padding="15dp"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="18dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        style="?android:attr/spinnerItemStyle"
+                        android:background="@drawable/spinner_taeduri"
+                        android:id="@+id/spinner" />
+                    <Spinner
+                        android:layout_marginLeft="10dp"
+                        android:padding="15dp"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="18dp"
+                        android:layout_width="wrap_content"
+                        android:background="@drawable/spinner_taeduri"
+                        style="?android:attr/spinnerItemStyle"
+                        android:layout_height="50dp"
+                        android:id="@+id/spinner2" />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="상세 주소"
+                        android:background="@drawable/address_taeduri"
+                        android:fontFamily="@font/listtext"
+                        android:id="@+id/detailAddress"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp"
+                        android:padding="15dp"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="18dp"
+                        android:textColorHint="@android:color/darker_gray"
+                        android:textColor="@android:color/black" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_weight="2"
             android:gravity="center"
@@ -166,11 +194,11 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:id="@+id/doregist"
                 android:text="가입하기"
                 android:background="@drawable/selector_registbtn"
-                android:layout_marginTop="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
