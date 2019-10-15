@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
     BodyShopDTO dto = null;
     EditText userId, userpw;
+    TextView fid, fpw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,28 @@ public class LoginActivity extends AppCompatActivity {
         Button btn_regist = (Button) findViewById(R.id.btn_regist);
         userId = (EditText) findViewById(R.id.userId);
         userpw = (EditText) findViewById(R.id.userPw);
+        fid = (TextView)findViewById(R.id.fid);
+        fpw = (TextView)findViewById(R.id.fpw);
+
+        fid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.FindIDActivity");
+                i.setComponent(componentName);
+                startActivity(i);
+            }
+        });
+
+        fpw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.FindPwActivity");
+                i.setComponent(componentName);
+                startActivity(i);
+            }
+        });
 
         final InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         LinearLayout linearLayout = (LinearLayout)findViewById(R.id.layout);
