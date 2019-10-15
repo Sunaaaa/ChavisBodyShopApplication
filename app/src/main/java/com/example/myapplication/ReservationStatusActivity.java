@@ -54,7 +54,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
     private BackPressCloseHandler backPressCloseHandler;
     SharedPreferences preferences;
     String flag = "", repair_t, repair_p, reservation_n;
-    ImageView btn_getNewList;
+    ImageView btn_getNewList, btn_out;
 
     class MyReservationRunnable implements Runnable {
         private String id;
@@ -272,6 +272,28 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
                 Thread thread = new Thread(myReservationRunnable);
                 thread.start();
+            }
+        });
+
+        shop_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+        btn_out = (ImageView)findViewById(R.id.btn_out);
+        btn_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.OpeningActivity");
+                intent.setComponent(componentName);
+                startActivity(intent);
             }
         });
 

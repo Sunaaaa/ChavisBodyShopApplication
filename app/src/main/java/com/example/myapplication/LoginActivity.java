@@ -183,7 +183,6 @@ public class LoginActivity extends AppCompatActivity {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);
 
-
         Log.i("msi", "가랏 데이터 : " + json);
 
         osw.write(json);
