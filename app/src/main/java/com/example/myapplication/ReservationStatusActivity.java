@@ -2,26 +2,18 @@ package com.example.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,10 +36,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static java.security.AccessController.getContext;
 
 public class ReservationStatusActivity extends AppCompatActivity {
 
@@ -119,80 +108,6 @@ public class ReservationStatusActivity extends AppCompatActivity {
         }
     }
 
-
-    class ChangeReservationRunnable implements Runnable {
-        private String bodyshop_no;
-        private String reservation_no;
-        private String rtime;
-        private String rperson;
-
-        public ChangeReservationRunnable(String bodyshop_no, String reservation_no, String rtime, String rperson) {
-            this.bodyshop_no = bodyshop_no;
-            this.reservation_no = reservation_no;
-            this.rtime = rtime;
-            this.rperson = rperson;
-        }
-
-        @Override
-        public void run() {
-            String newreceivedata = "";
-            URL url = null;
-            URL url2 = null;
-            try {
-                url = new URL("http://70.12.115.73:9090/Chavis/Reservation/finishrepair.do");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Connection", "Keep-Alive");
-                conn.setRequestProperty("charset", "utf-8");
-                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-
-                Map<String, String> map = new HashMap<String, String>();
-
-                map.put("bodyshop_no", bodyshop_no);
-                map.put("reservation_no", reservation_no);
-                map.put("repaired_time", rtime);
-                map.put("repaired_person", rperson);
-
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(map);
-
-                Log.i("SECOND", "가랏 데이터 : " + json);
-
-                osw.write(json);
-                osw.flush();
-                Log.i("SECOND", "가랏 데이터 결과 : " + conn.getResponseCode());
-//
-//                Log.i("msi", "222");
-//                int responseCode = conn.getResponseCode();
-//                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//                String inputLine;
-//                StringBuffer response = new StringBuffer();
-//
-//                while ((inputLine = in.readLine()) != null) {
-//                    response.append(inputLine);
-//                }
-//
-//                newreceivedata = response.toString();
-//                ArrayList<ReservationListDTO> myObject = mapper.readValue(newreceivedata, new TypeReference<ArrayList<ReservationListDTO>>() {});
-//                in.close();
-//                Log.i("ReservationList_NEW_", newreceivedata);
-//                Log.i("ReservationList_NEW_", myObject.get(1).getMember_mname());
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelableArrayList("reservation_list", myObject);
-//
-//                Message message = new Message();
-//                message.setData(bundle);
-//                Log.i("ReservationList__", String.valueOf(myObject.size()));
-//
-//                handler.sendMessage(message);
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     BodyShopDTO bodyShopDTO;
     Handler handler;
