@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/reslayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/reservation_status_background"
     android:orientation="vertical">
 

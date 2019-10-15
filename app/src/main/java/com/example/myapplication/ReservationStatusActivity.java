@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -194,6 +196,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
     BodyShopDTO bodyShopDTO;
     Handler handler;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,6 +216,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
         today.setText(sdf.format(date));
 
         listView = (ListView) findViewById(R.id.reservation_listview);
+        LinearLayout linearLayout = (LinearLayout)findViewById(R.id.reslayout);
 
         preferences = getSharedPreferences("preferences", MODE_PRIVATE);
         String myObject = preferences.getString("myObject", "NO");
@@ -223,6 +227,8 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
         Log.i("FIRST", bodyShopDTO.getBodyshop_name());
         shop_name.setText(bodyShopDTO.getBodyshop_name());
+
+
         final ReservationAdapter adapter = new ReservationAdapter();
 
         handler = new Handler() {
