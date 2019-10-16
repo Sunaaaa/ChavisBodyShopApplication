@@ -91,6 +91,7 @@ public class CarKeyActivity extends AppCompatActivity {
             }
         });
 
+        Log.i("수리 목록 체크 다이얼로그", reservationListDTO.getRepaired_person());
 
         btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -103,14 +104,13 @@ public class CarKeyActivity extends AppCompatActivity {
             }
         });
 //        if (reservationListDTO.getRepaired_person().length() > 0 ) {
-        if (reservationListDTO.getRepaired_person() != null) {
+        if (!reservationListDTO.getRepaired_person().equals("NO")) {
             editText.setText(reservationListDTO.getRepaired_person() + " 이/가 정비를 완료했습니다. ");
             editText.setEnabled(false);
             btn_getKey.setEnabled(false);
             btn_getKey.setBackgroundResource(R.drawable.disablekey);
             btn_repair_finish.setVisibility(View.GONE);
             pname.setVisibility(View.GONE);
-
 
         } else {
             btn_repair_finish.setOnClickListener(new View.OnClickListener() {

@@ -140,7 +140,6 @@ public class ReservationStatusActivity extends AppCompatActivity {
         final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
 //        final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
 
-        Log.i("FIRST", bodyShopDTO.getBodyshop_name());
         shop_name.setText(bodyShopDTO.getBodyshop_name());
 
 
