@@ -2,10 +2,12 @@ package com.example.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -166,6 +168,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
                     }
 
                 }
+                Log.i("바디 쑙", "바디 쑙 넘버 확인  " + bodyShopDTO.getBodyshop_no());
 
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -201,13 +204,7 @@ public class ReservationStatusActivity extends AppCompatActivity {
         btn_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.commit();
-                Intent intent = new Intent();
-                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.OpeningActivity");
-                intent.setComponent(componentName);
-                startActivity(intent);
+                makeDialog();
             }
         });
 
@@ -226,7 +223,31 @@ public class ReservationStatusActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    public void makeDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(ReservationStatusActivity.this);
+        alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.OpeningActivity");
+                intent.setComponent(componentName);
+                startActivity(intent);
+                dialog.dismiss();     //닫기
+            }
+        });
+        alert.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();     //닫기
+            }
+        });
+        alert.setMessage("로그아웃 하시겠습니까?");
+        alert.show();
     }
 
     @Override

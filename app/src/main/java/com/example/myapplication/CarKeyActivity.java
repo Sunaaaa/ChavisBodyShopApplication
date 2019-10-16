@@ -101,6 +101,8 @@ public class CarKeyActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
                 i.setComponent(componentName);
                 startActivity(i);
+                finish();
+
             }
         });
 //        if (reservationListDTO.getRepaired_person().length() > 0 ) {
@@ -202,6 +204,7 @@ public class CarKeyActivity extends AppCompatActivity {
             ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
             i.setComponent(componentName);
             startActivity(i);
+            finish();
         } else {
             makeDialogDoAgain();
         }

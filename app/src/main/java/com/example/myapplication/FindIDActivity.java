@@ -42,7 +42,7 @@ public class FindIDActivity extends AppCompatActivity {
         public void run() {
 
             try {
-                URL url = new URL("http://70.12.115.63:9090/Chavis/Bodyshop/findid.do");
+                URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/findinfo.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -52,7 +52,8 @@ public class FindIDActivity extends AppCompatActivity {
 
                 Map<String, String> map = new HashMap<String, String>();
 
-                map.put("name", name);
+                map.put("bodyshop_name", name);
+                map.put("bodyshop_id", "NO");
 
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(map);
@@ -79,6 +80,7 @@ public class FindIDActivity extends AppCompatActivity {
                 bundle.putString("result", result);
                 Message message = new Message();
                 message.setData(bundle);
+                handler.sendMessage(message);
 
                 br.close();
                 conn.disconnect();
@@ -107,7 +109,7 @@ public class FindIDActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 Bundle bundle = msg.getData();
                 String result = bundle.getString("result");
-                if (result.equals("NO BODYSHOP")){
+                if (!result.equals("NO BODYSHOP")){
                     findSuccessDialog(result);
                 } else {
                     findFailDialog(result);

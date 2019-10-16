@@ -46,7 +46,7 @@ public class FindPwActivity extends AppCompatActivity {
             String sendMsg = "";
 
             try {
-                URL url = new URL("http://70.12.115.63:9090/Chavis/Bodyshop/findpw.do");
+                URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/findinfo.do");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -56,8 +56,8 @@ public class FindPwActivity extends AppCompatActivity {
 
                 Map<String, String> map = new HashMap<String, String>();
 
-                map.put("name", name);
-                map.put("id", id);
+                map.put("bodyshop_name", name);
+                map.put("bodyshop_id", id);
 
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(map);
@@ -84,6 +84,7 @@ public class FindPwActivity extends AppCompatActivity {
                 bundle.putString("result", result);
                 Message message = new Message();
                 message.setData(bundle);
+                handler.sendMessage(message);
 
                 br.close();
                 conn.disconnect();
@@ -115,9 +116,9 @@ public class FindPwActivity extends AppCompatActivity {
                 Bundle bundle = msg.getData();
                 String result = bundle.getString("result");
                 if (result.equals("NO BODYSHOP")){
-                    findSuccessDialog(result);
-                } else {
                     findFailDialog(result);
+                } else {
+                    findSuccessDialog(result);
                 }
             }
         };

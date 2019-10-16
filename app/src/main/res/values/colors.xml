@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorBS">#95cde4</color>
     <color name="colorYellow">#FFD500</color>
+    <color name="colorBlack">@android:color/black</color>
 </resources>

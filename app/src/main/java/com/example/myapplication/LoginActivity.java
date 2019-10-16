@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private BackPressCloseHandler backPressCloseHandler;
     BodyShopDTO dto = null;
     EditText userId, userpw;
     TextView fid, fpw;
@@ -46,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
         userpw = (EditText) findViewById(R.id.userPw);
         fid = (TextView)findViewById(R.id.fid);
         fpw = (TextView)findViewById(R.id.fpw);
+
+        backPressCloseHandler = new BackPressCloseHandler(this);
 
         fid.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,5 +218,12 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("LOGIN_ADD_SharedPref", "로그인 객체 저장 성공");
         return myObject;
     }
+
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+    }
+
 
 }
