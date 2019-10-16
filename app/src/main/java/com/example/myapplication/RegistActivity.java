@@ -502,11 +502,6 @@ public class RegistActivity extends AppCompatActivity {
                                     result = sendPost(name, pw, address);
                                     Log.i("RegistAcitivty", "1");
 
-                                    if (result.equals("SUCCESS")) {
-                                        makeDialog();
-                                    } else {
-                                        registSuccessDialog(result);
-                                    }
                                 } catch (Exception e) {
                                     Log.i("RegistAcitivty_HERE", e.toString());
                                 }
@@ -522,6 +517,12 @@ public class RegistActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.i("RegistAcitivty_Thread",  e.toString());
                     }
+                    if (result.equals("SUCCESS")) {
+                        makeDialog();
+                    } else {
+                        registSuccessDialog(result);
+                    }
+
                 }
 
             }
