@@ -115,7 +115,7 @@ public class FindPwActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 Bundle bundle = msg.getData();
                 String result = bundle.getString("result");
-                if (result.equals("NO BODYSHOP")){
+                if (result.equals("\"NO\"")){
                     findFailDialog(result);
                 } else {
                     findSuccessDialog(result);

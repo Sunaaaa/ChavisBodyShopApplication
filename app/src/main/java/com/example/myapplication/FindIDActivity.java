@@ -109,7 +109,8 @@ public class FindIDActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 Bundle bundle = msg.getData();
                 String result = bundle.getString("result");
-                if (!result.equals("NO BODYSHOP")){
+                Log.i("RESULT__", result);
+                if (!result.equals("\"NO\"")){
                     findSuccessDialog(result);
                 } else {
                     findFailDialog(result);

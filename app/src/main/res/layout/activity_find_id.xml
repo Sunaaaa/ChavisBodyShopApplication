@@ -63,6 +63,7 @@
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:background="@drawable/black_taeduri"
+                android:paddingLeft="10dp"
                 android:fontFamily="@font/listtext"
                 android:hint="정비소 이름 ( 예> 행복 정비소)"
                 android:textColor="@android:color/black"
