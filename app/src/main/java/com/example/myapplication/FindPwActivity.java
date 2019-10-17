@@ -62,7 +62,7 @@ public class FindPwActivity extends AppCompatActivity {
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(map);
 
-                Log.i("msi", "가랏 데이터 : " + json);
+                Log.i("msi", "서버에게 보내는 데이터 : " + json);
 
                 osw.write(json);
                 osw.flush();
@@ -78,7 +78,6 @@ public class FindPwActivity extends AppCompatActivity {
                     sb.append(input);
                     result += input;
                 }
-                Log.i("what?", result);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("result", result);
@@ -146,7 +145,7 @@ public class FindPwActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
-                Log.i("msi", "회원가입 성공!!");
+                Log.i("FIND_PW", "비밀번호 찾기 성공!!");
                 dialog.dismiss();     //닫기
             }
         });
@@ -170,6 +169,7 @@ public class FindPwActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
+                Log.i("FIND_PW", "비밀번호 찾기 실패!!");
                 dialog.dismiss();     //닫기
             }
         });

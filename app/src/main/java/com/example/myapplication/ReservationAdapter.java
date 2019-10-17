@@ -80,8 +80,6 @@ public class ReservationAdapter extends BaseAdapter {
 
         try {
 
-            Log.i("DTO", "통과 1");
-
             reservation_time.setText(dto.getReservation_time());
             member_mname.setText(dto.getMember_mname());
             cartype.setText(dto.getCar_type());
@@ -98,7 +96,6 @@ public class ReservationAdapter extends BaseAdapter {
             } else {
                 repair_status.setImageResource(R.drawable.done);
             }
-            Log.i("DTO", "이쁘게 다 꾸몄네유~~~");
 
         } catch (Exception e) {
             Log.i("Adapter ERROR_", e.toString());

@@ -76,12 +76,12 @@ public class ReservationStatusActivity extends AppCompatActivity {
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(map);
 
-                Log.i("FIRST", "가랏 데이터 : " + json);
+                Log.i("MyReservationRunnable", "SERVER에게 보내는 데이터 : " + json);
 
                 osw.write(json);
                 osw.flush();
 
-                Log.i("FIRST", "데이터 받기 ");
+                Log.i("MyReservationRunnable", "SERVER로부터 데이터 받기 ");
                 int responseCode = conn.getResponseCode();
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
@@ -175,12 +175,9 @@ public class ReservationStatusActivity extends AppCompatActivity {
             }
         };
 
-        Log.i("FIRST", "쓰레드 스타트 해봅시다");
-
         MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
         Thread thread = new Thread(myReservationRunnable);
         thread.start();
-        Log.i("FIRST", "쓰레드 스타트 함!");
 
         btn_getNewList = (ImageView)findViewById(R.id.btn_getNewList);
         btn_getNewList.setOnClickListener(new View.OnClickListener() {

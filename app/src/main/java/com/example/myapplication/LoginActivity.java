@@ -103,25 +103,6 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 dto = sendPost(userId.getText().toString(), userpw.getText().toString());
                                 Log.i("LOGIN", dto.getBodyshop_id());
-
-                                if (dto.getBodyshop_id().equals("NO")) {
-                                    makeDialog();
-                                } else {
-
-                                    // 서비스 실행
-                                    Intent i = new Intent();
-                                    ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
-                                    i.setComponent(sComponentName);
-                                    startService(i);
-
-                                    Intent intent = new Intent();
-                                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
-                                    intent.setComponent(componentName);
-                                    intent.putExtra("data", dto);
-                                    startActivity(intent);
-                                    Log.i("LOGIN", dto.getBodyshop_id());
-                                    Log.i("msi", "로그인 성공!!");
-                                }
                             } catch (Exception e) {
                                 Log.i("LoginAcitivty_HERE", e.toString());
                             }
@@ -137,6 +118,29 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.i("msi", e.toString());
                 }
+                if (dto.getBodyshop_id().equals("NO")) {
+                    SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.clear();
+                    editor.commit();
+                    makeDialog();
+                } else {
+
+                    // 서비스 실행
+                    Intent i = new Intent();
+                    ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+                    i.setComponent(sComponentName);
+                    startService(i);
+
+                    Intent intent = new Intent();
+                    ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+                    intent.setComponent(componentName);
+                    intent.putExtra("data", dto);
+                    startActivity(intent);
+                    Log.i("LOGIN", dto.getBodyshop_id());
+                    Log.i("msi", "로그인 성공!!");
+                }
+
 
             }
 
@@ -152,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                 dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("긁적 로그인 실패했는디 다시 로그인 해볼라요?");
+        alert.setMessage("로그인에 실패했습니다. 다시 입력해주세요.");
         alert.show();
     }
 
@@ -209,12 +213,12 @@ public class LoginActivity extends AppCompatActivity {
         Log.i("LOGIN", myObject.getBodyshop_id());
 
         // 자동 로그인 등록
-        SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        Gson gson = new Gson();
-        String bodyshopjson = gson.toJson(myObject);
-        editor.putString("myObject", bodyshopjson);
-        editor.commit();
+//        SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
+//        Gson gson = new Gson();
+//        String bodyshopjson = gson.toJson(myObject);
+//        editor.putString("myObject", bodyshopjson);
+//        editor.commit();
         Log.i("LOGIN_ADD_SharedPref", "로그인 객체 저장 성공");
         return myObject;
     }

@@ -118,8 +118,7 @@ public class CarKeyActivity extends AppCompatActivity {
             btn_repair_finish.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("수리 목록 체크 다이얼로그", "폴킴쨩");
-                    Log.i("수리 목록 체크 다이얼로그", "폴킴");
+                    Log.i("REPAIRE_FINISH_BTN", "수리 목록 체크 다이얼로그");
                     AlertDialog.Builder dialog = new AlertDialog.Builder(CarKeyActivity.this);
                     dialog.setTitle("수리 목록")
 //                        .setMessage("정비사 이름을 입력하세요.")
@@ -173,7 +172,7 @@ public class CarKeyActivity extends AppCompatActivity {
                                         String repaired_time = sdf.format(date);
 //                                    String repaired_person = editText.getText().toString();
                                         repaired_info = reservationListDTO.getReservation_no() + "/" + repaired_time + "/" + editText.getText().toString();
-                                        Log.i("수리 목록 (맨 뒤에 '#' 빼기) ", repair_list);
+                                        Log.i("수리 목록 (맨 뒤에 '#' 빼기 체크) ", repair_list);
                                         bodyShopService.clientToServer("RepairFinish", repair_list + "/" + repaired_info);
                                     }
 
@@ -219,7 +218,7 @@ public class CarKeyActivity extends AppCompatActivity {
                 dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("수리 목록을 체크하세요...");
+        alert.setMessage("수리 목록을 체크하세요.");
         alert.show();
     }
 
@@ -231,7 +230,7 @@ public class CarKeyActivity extends AppCompatActivity {
                 dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("정비사 명을 입력해주세요...");
+        alert.setMessage("정비사 명을 입력해주세요.");
         alert.show();
     }
 
@@ -243,7 +242,7 @@ public class CarKeyActivity extends AppCompatActivity {
                 dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("정비목록 및 정비사명이 제대로 입력됬는지 확인하세용");
+        alert.setMessage("정비목록 및 정비사명이 제대로 입력됬는지 확인하세요.");
         alert.show();
     }
 

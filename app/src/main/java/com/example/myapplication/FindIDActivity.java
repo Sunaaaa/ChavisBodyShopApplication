@@ -142,7 +142,7 @@ public class FindIDActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
-                Log.i("msi", "회원가입 성공!!");
+                Log.i("FIND_ID", "아이디 찾기 성공!!");
                 dialog.dismiss();     //닫기
             }
         });
@@ -166,6 +166,7 @@ public class FindIDActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
+                Log.i("FIND_ID", "아이디 찾기 실패!!");
                 dialog.dismiss();     //닫기
             }
         });

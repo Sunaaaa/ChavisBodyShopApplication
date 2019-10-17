@@ -60,7 +60,6 @@ public class RegistActivity extends AppCompatActivity {
         reg_pw_ET = (EditText) findViewById(R.id.reg_pw);
         reg_pwCk_ET = (EditText)findViewById(R.id.reg_pwCk);
         detailAddress_ET = (EditText) findViewById(R.id.detailAddress);
-//        imageView = (ImageView)findViewById(R.id.ckImg);
         spin1 = (Spinner) findViewById(R.id.spinner);
         spin2 = (Spinner) findViewById(R.id.spinner2);
         doregist = (Button)findViewById(R.id.doregist);
@@ -370,7 +369,6 @@ public class RegistActivity extends AppCompatActivity {
             }
         });
 
-        Log.i("aaaaaaaaaaaaaaa", reg_pwCk_ET.getBackground() + "");
         reg_pw_ET.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -385,11 +383,9 @@ public class RegistActivity extends AppCompatActivity {
                         doregist.setEnabled(false);
                     }
                     if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
-//                        imageView.setImageResource(R.drawable.ck);
                         reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
                         doregist.setEnabled(true);
                     } else {
-//                        imageView.setImageResource(R.drawable.nck);
                         reg_pwCk_ET.setBackgroundResource(R.drawable.nopass);
                         doregist.setEnabled(false);
                     }
@@ -419,15 +415,11 @@ public class RegistActivity extends AppCompatActivity {
                         doregist.setEnabled(false);
                     }
                     if (reg_pw_ET.getText().toString().equals(reg_pwCk_ET.getText().toString())){
-//                        imageView.setImageResource(R.drawable.ck);
                         reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
                         doregist.setEnabled(true);
-                        Log.i("aaaaaaaaaaaaaaa", reg_pwCk_ET.getBackground() + "");
                     } else {
-//                        imageView.setImageResource(R.drawable.nck);
                         reg_pwCk_ET.setBackgroundResource(R.drawable.nopass);
                         doregist.setEnabled(false);
-                        Log.i("aaaaaaaaaaaaaaa", reg_pwCk_ET.getBackground() + "");
                     }
                 } else {
                     reg_pwCk_ET.setBackgroundResource(R.drawable.pass);
@@ -545,13 +537,24 @@ public class RegistActivity extends AppCompatActivity {
     // 회원 가입 실패
     public void makeDialog() {
         AlertDialog.Builder alert = new AlertDialog.Builder(RegistActivity.this);
-        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();     //닫기
             }
         });
-        alert.setMessage("긁적 다시 회원가입 해볼래요?");
+        alert.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
+                intent.setComponent(componentName);
+                startActivity(intent);
+                Log.i("msi", "회원가입 실패 후 로그인 화면 이동!!");
+                dialog.dismiss();     //닫기
+            }
+        });
+        alert.setMessage("회원가입에 실패했습니다. " + "\n" +  "다시 회원가입 하시겠습니까?");
         alert.show();
     }
 
@@ -565,7 +568,7 @@ public class RegistActivity extends AppCompatActivity {
                 ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.LoginActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
-                Log.i("msi", "회원가입 성공!!");
+                Log.i("msi", "회원가입 성공 후 로그인 화면 이동 !!");
                 dialog.dismiss();     //닫기
             }
         });
@@ -599,24 +602,22 @@ public class RegistActivity extends AppCompatActivity {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(map);
 
-        Log.i("REGIST__", "가랏 회원가입 데이터 : " + json);
+        Log.i("REGIST__DATA", "회원가입 데이터 : " + json);
 
         osw.write(json);
         osw.flush();
 
-        Log.i("REGIST__2", "222");
         int responseCode = conn.getResponseCode();
-        Log.i("REGIST__3", responseCode+ "");
+        Log.i("REGIST__responseCode", responseCode+ "");
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
-        Log.i("REGIST__3", receiveData);
         receiveData = response.toString();
         in.close();
-        Log.i("REGIST__", receiveData);
+        Log.i("REGIST__SERVER", receiveData);
         return receiveData;
     }
 

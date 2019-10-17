@@ -42,11 +42,11 @@ public class BodyShopService extends Service {
                 try {
 
                     String msg = (String) blockingQueue.take();
-                    Log.i("ChattingClient", "blocking queue send: " + msg);
+                    Log.i("BodyShopService", "blocking queue send: " + msg);
                     out.println(msg);
                     out.flush();
                 } catch (Exception e) {
-                    Log.i("ChattingClientError", "blocking queue 문제 : " + e.toString());
+                    Log.i("BodyShopServiceError", "blocking queue 문제 : " + e.toString());
                 }
             }
 
@@ -134,7 +134,7 @@ public class BodyShopService extends Service {
             Log.i("BodyShopService" , msg);
             blockingQueue.add(protocol + "#" + msg);
         } else {
-            Log.i("BodyShopService" , "보낼때 프로토콜 문제 있음");
+            Log.i("BodyShopService" , "프로토콜 문제 발생");
         }
 
     }
