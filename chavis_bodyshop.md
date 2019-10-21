@@ -2,6 +2,8 @@
 
 ![1570719347499](https://user-images.githubusercontent.com/39547788/66580603-a1f25080-ebb9-11e9-8c9f-45c4ad6c96e5.png)
 
+<br>
+
 ## 정비소 전용 Application
 
 ### Application Icon
@@ -17,7 +19,9 @@
 ### 정비소 등록 화면(RegistActivity)
 
 - 입력한 데이터를 이용해 정비소를 등록하여, 정비소 어플리케이션을 사용할 수 있도록 한다.
+
 - 필요한 데이터
+
   - 정비소 이름
   - 사용할 비밀번호
   - 주소 (도로명 주소)
@@ -103,9 +107,10 @@
 #### 주소 선택 방법
 
 - 정비소가 위치한 주소를 작성한다.
-  1.  대분류로 특별시 / 도 를 선택한다.
-  2.  소분류로 구 를 선택한다.
-  3.  상세주소를 작성한다.
+
+  1. 대분류로 특별시 / 도 를 선택한다.
+  2. 소분류로 구 를 선택한다.
+  3. 상세주소를 작성한다.
 
 - Spinner를 구현하여 대분류별 소분류 아이템을 선택할 수 있다. 
 
@@ -283,6 +288,9 @@
 
 - 등록이 완료되면,  Dialog를 띄우고 로그인 화면으로 이동한다.
 
+  - 정비사 ID는 서버에서 생성하기 때문에, 반드시 사용자에게 알려야 한다.
+    - Dialog Message를 통해 사용자가 알도록 한다.
+
   ```java
   // 회원 가입 성공
   public void registSuccessDialog(String result) {
@@ -338,7 +346,7 @@
 
 <br>
 
-### 정비소 로그인 ()
+### 정비소 로그인 (LoginActivity)
 
 - 서버에 의해 부여된 ID와 정비소 등록 시 설정한 비밀번호로 로그인 한다.
 
@@ -346,22 +354,174 @@
 
   - 로그인
 
-    - ID와 비밀번호가 맞는 경우, 로그인에 성공한다.
-      - 자동 로그인 기능 추가
-        - 어플리케이션이 삭제되거나, 로그아웃을 하면 로그인 정보 내역이 삭제된다.
-    - ID와 비밀번호가 틀린 경우, 로그인에 실패한다.
+    - '로그인 버튼'을 누르면, Thread를 생성하여 sendPost() 함수를 호출한다.
 
-    <br>
+      ```java
+      try {
+        Thread wThread = new Thread() {
+              public void run() {
+                try {
+                      dto = sendPost(userId.getText().toString(), userpw.getText().toString());
+                } catch (Exception e) {
+                      Log.i("LoginAcitivty_HERE", e.toString());
+                }
+              }
+        };
+          wThread.start();
+      
+          try {
+            wThread.join();
+          } catch (Exception e) {
+            Log.i("LoginAcitivty_ERROR", e.toString());
+          }
+      } catch (Exception e) {
+          Log.i("LoginAcitivty_ERROR", e.toString());
+      }
+      ```
+
+    - sendPost() : 서버와의 HTTP 통신을 통해 로그인 정보를 전달하고, 로그인 결과를 받는다.
+
+      - 로그인 정보 데이터 보내기 
+
+        - JSON 형식
+        - id : 사용자가 입력한 id
+        - pw : 사용자가 입력한 pw
+
+      - 로그인 결과 
+
+        - BodyShopDTO 객체를 받는다.
+
+          ```java
+          private BodyShopDTO sendPost(String id, String pw) throws Exception {
+          
+              Log.i("sendPost", "sendPost 들어왔다 1" );
+          
+              String receivedata;
+              String sendMsg;
+          
+              URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/login.do");
+          
+              HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+              conn.setRequestMethod("POST");
+              //        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+              conn.setRequestProperty("Content-Type", "application/json");
+              conn.setRequestProperty("Connection", "Keep-Alive");
+              conn.setRequestProperty("charset", "utf-8");
+              OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+          
+              Map<String, String> map = new HashMap<String, String>();
+          
+              map.put("id", id);
+              map.put("pw", pw);
+          
+              ObjectMapper mapper = new ObjectMapper();
+              String json = mapper.writeValueAsString(map);
+          
+              osw.write(json);
+              osw.flush();
+          
+              int responseCode = conn.getResponseCode();
+              BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+              String inputLine;
+              StringBuffer response = new StringBuffer();
+              while ((inputLine = in.readLine()) != null) {
+                  response.append(inputLine);
+              }
+              receivedata = response.toString();
+              in.close();
+              BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {
+              });
+          
+              SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+              SharedPreferences.Editor editor = preferences.edit();
+              Gson gson = new Gson();
+              String bodyshopjson = gson.toJson(myObject);
+              editor.putString("myObject", bodyshopjson);
+              editor.commit();
+          
+          
+              return myObject;
+          }
+          ```
+
+          <br>
+
+        - 만약 Bodyshop_id가 "NO" 가 아닌 경우, 로그인 성공을 뜻한다.
+
+          만약 Bodyshop_id가 "NO" 인 경우, 로그인 실패를 뜻한다.
+
+          ```java
+          if (dto.getBodyshop_id().equals("NO")) {
+              SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+              SharedPreferences.Editor editor = preferences.edit();
+              editor.clear();
+              editor.commit();
+              makeDialog();
+          } else {
+          
+              // 서비스 실행
+              Intent i = new Intent();
+              ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+              i.setComponent(sComponentName);
+              startService(i);
+          
+              Intent intent = new Intent();
+              ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+              intent.setComponent(componentName);
+              intent.putExtra("data", dto);
+              startActivity(intent);
+              Log.i("LOGIN", dto.getBodyshop_id());
+              Log.i("msi", "로그인 성공!!");
+          }
+          ```
+
+      <br>
+
+      - ID와 비밀번호가 맞는 경우, 로그인에 성공한다.
+
+        - 자동 로그인 기능 추가
+
+          - 어플리케이션이 삭제되거나, 로그아웃을 하면 로그인 정보 내역이 삭제된다.
+
+            ```java
+            if (dto.getBodyshop_id().equals("NO")) {
+                SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.commit();
+                // 로그인 실패 다이얼로드 띄우기
+                makeDialog();
+            } else {
+            
+                // 로그인 성공 ! 서비스 실행 & 예약 현황 화면으로 이동
+                Intent i = new Intent();
+                ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+                i.setComponent(sComponentName);
+                startService(i);
+            
+                Intent intent = new Intent();
+                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+                intent.setComponent(componentName);
+                intent.putExtra("data", dto);
+                startActivity(intent);
+            }
+            ```
+
+            
+
+      - ID와 비밀번호가 틀린 경우, 로그인에 실패한다.
+
+      <br>
 
   - 아이디 / 비밀번호 찾기
 
     - 아이디 찾기
 
-      - 정비소 등록 시 입력한 정비소 이름과 주소를 이용해 아이디를 찾는다.
+      - 정비소 등록 시 입력한 정비소 이름을 이용해 아이디를 찾는다.
 
     - 비밀번호 찾기
 
-      - ID와 정비소 이름과 주소를 이용해 비밀번호를 찾는다.
+      - ID와 정비소 이름을 이용해 비밀번호를 찾는다.
 
       <br>
 
@@ -372,6 +532,206 @@
 <br>
 
 <br>
+
+
+
+### 아이디 찾기 화면 (FindIDActivity)
+
+- 정비소의 ID는 서버에서 생성하기 때문에, 사용자에게  익숙하지 않다. 
+
+  그래서 아이디 찾기 기능이 필수이다.
+
+- 기능 
+
+  - 아이디 찾기
+
+    - 정비소 등록 시 입력한 정비소 이름을 이용해 아이디를 찾는다.
+
+    - '아이디 찾기'를 누르면 아이디 찾기 기능을 수행하는 Thread를 실행한다.
+
+      ```java
+      FindIdRunnable findIdRunnable = new FindIdRunnable(fidname.getText().toString(), handler);
+      Thread thread = new Thread(findIdRunnable);
+      thread.start();
+      ```
+
+      
+
+#### 아이디 찾기 Runnable 
+
+- 정비소 이름과 Handler를 멤버로 갖는 Runnable 클래스를 선언한다.
+
+  ```java
+  private String name;
+  private Handler handler;
+  
+  public FindIdRunnable(String name, Handler handler) {
+      this.name = name;
+      this.handler = handler;
+  }
+  ```
+
+  <br>
+
+  - 서버에서 아이디 또는 비밀번호 찾기를 구별하기 위해 
+
+    아이디를 찾는 경우에는 bodyshop_id="NO" 를 설정하고
+
+    비밀번호를 찾는 경우에는 bodyshop_id=[사용자가 작성한 ID]로 설정한다.
+
+    ```java
+    OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+    
+    Map<String, String> map = new HashMap<String, String>();
+    
+    map.put("bodyshop_name", name);
+    map.put("bodyshop_id", "NO");
+    
+    ObjectMapper mapper = new ObjectMapper();
+    String json = mapper.writeValueAsString(map);
+    
+    osw.write(json);
+    osw.flush();
+    ```
+
+  - 서버로부터 받은 결과 데이터를 Bundle과 Message에 담아 Handler를 통해 Dialog를 생성하는 함수를 호출한다.
+
+    ```java
+    Bundle bundle = new Bundle();
+    bundle.putString("result", result);
+    Message message = new Message();
+    message.setData(bundle);
+    handler.sendMessage(message);
+    ```
+
+    <br>
+
+    - 정비소 이름으로 등록된 정비소가 있는 경우, 정비소의 ID 를 Return한다.
+      -  findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
+
+    - 정비소 이름으로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
+
+      -  findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
+
+      ```java
+      final Handler handler = new Handler(){
+          @Override
+          public void handleMessage(@NonNull Message msg) {
+              super.handleMessage(msg);
+              Bundle bundle = msg.getData();
+              String result = bundle.getString("result");
+              Log.i("RESULT__", result);
+              if (!result.equals("\"NO\"")){
+                  findSuccessDialog(result);
+              } else {
+                  findFailDialog(result);
+              }
+          }
+      };
+      ```
+
+
+
+# 수정하기
+
+### 비밀번호 찾기 화면 (FindPwActivity)
+
+- 
+
+- 기능 
+
+  - 아이디 찾기
+
+    - 정비소 등록 시 입력한 정비소 이름을 이용해 아이디를 찾는다.
+
+    - '아이디 찾기'를 누르면 아이디 찾기 기능을 수행하는 Thread를 실행한다.
+
+      ```java
+      FindIdRunnable findIdRunnable = new FindIdRunnable(fidname.getText().toString(), handler);
+      Thread thread = new Thread(findIdRunnable);
+      thread.start();
+      ```
+
+      
+
+#### 비밀번호 찾기 Runnable 
+
+- 정비소 이름과 Handler를 멤버로 갖는 Runnable 클래스를 선언한다.
+
+  ```java
+  private String name;
+  private Handler handler;
+  
+  public FindIdRunnable(String name, Handler handler) {
+      this.name = name;
+      this.handler = handler;
+  }
+  ```
+
+  <br>
+
+  - 서버에서 아이디 또는 비밀번호 찾기를 구별하기 위해 
+
+    아이디를 찾는 경우에는 bodyshop_id="NO" 를 설정하고
+
+    비밀번호를 찾는 경우에는 bodyshop_id=[사용자가 작성한 ID]로 설정한다.
+
+    ```java
+    OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+    
+    Map<String, String> map = new HashMap<String, String>();
+    
+    map.put("bodyshop_name", name);
+    map.put("bodyshop_id", "NO");
+    
+    ObjectMapper mapper = new ObjectMapper();
+    String json = mapper.writeValueAsString(map);
+    
+    osw.write(json);
+    osw.flush();
+    ```
+
+  - 서버로부터 받은 결과 데이터를 Bundle과 Message에 담아 Handler를 통해 Dialog를 생성하는 함수를 호출한다.
+
+    ```java
+    Bundle bundle = new Bundle();
+    bundle.putString("result", result);
+    Message message = new Message();
+    message.setData(bundle);
+    handler.sendMessage(message);
+    ```
+
+    <br>
+
+    - 정비소 이름으로 등록된 정비소가 있는 경우, 정비소의 ID 를 Return한다.
+      -  findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
+
+    - 정비소 이름으로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
+
+      -  findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
+
+      ```java
+      final Handler handler = new Handler(){
+          @Override
+          public void handleMessage(@NonNull Message msg) {
+              super.handleMessage(msg);
+              Bundle bundle = msg.getData();
+              String result = bundle.getString("result");
+              Log.i("RESULT__", result);
+              if (!result.equals("\"NO\"")){
+                  findSuccessDialog(result);
+              } else {
+                  findFailDialog(result);
+              }
+          }
+      };
+      ```
+
+    
+
+
+
+### 
 
 ### 정비소 예약 현황 확인 화면
 
@@ -413,9 +773,7 @@
 
   - 수리 완료
 
-    - 수리 목록 ( 타이어, 와이퍼, 냉각수, 엔진오일 ) 중 수리한 내역을 선택하여 
-
-      수리한 정비사의 이름과 수리 완료 날짜 ( 현재 시간 )을 서버에 전송한다.
+    - 수리 목록 ( 타이어, 와이퍼, 냉각수, 엔진오일 ) 중 수리한 내역을 선택하여 수리한 정비사의 이름과 수리 완료 날짜 ( 현재 시간 )을 서버에 전송한다.
 
 <br>
 
