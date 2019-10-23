@@ -16,7 +16,27 @@
 
 
 
-### 정비소 등록 화면(RegistActivity)
+<br>
+
+## 예약 정보 VO
+
+### ReservationVO
+
+- 설계한 데이터베이스와 같은 이름의 멤버를 선언한다.
+  - 서버에서 전달받은 데이터를 Jackson 라이브러리로 한번에  값을 저장하기 위해서 가능한 데이터베이스의 필드명과 같은 변수명을 지정한다.
+- 액티비티 전환 시, 예약 정보 객체를 전달하기 위해 해당 객체가 마샬링 가능하도록 Parcelable interface를 구현gksek.
+
+
+
+<br>
+
+<br>
+
+
+
+## 회원 정보 등록 및 수정
+
+### 정비소 등록 (RegistActivity)
 
 - 입력한 데이터를 이용해 정비소를 등록하여, 정비소 어플리케이션을 사용할 수 있도록 한다.
 
@@ -346,196 +366,7 @@
 
 <br>
 
-### 정비소 로그인 (LoginActivity)
-
-- 서버에 의해 부여된 ID와 정비소 등록 시 설정한 비밀번호로 로그인 한다.
-
-- 기능
-
-  - 로그인
-
-    - '로그인 버튼'을 누르면, Thread를 생성하여 sendPost() 함수를 호출한다.
-
-      ```java
-      try {
-        Thread wThread = new Thread() {
-              public void run() {
-                try {
-                      dto = sendPost(userId.getText().toString(), userpw.getText().toString());
-                } catch (Exception e) {
-                      Log.i("LoginAcitivty_HERE", e.toString());
-                }
-              }
-        };
-          wThread.start();
-      
-          try {
-            wThread.join();
-          } catch (Exception e) {
-            Log.i("LoginAcitivty_ERROR", e.toString());
-          }
-      } catch (Exception e) {
-          Log.i("LoginAcitivty_ERROR", e.toString());
-      }
-      ```
-
-    - sendPost() : 서버와의 HTTP 통신을 통해 로그인 정보를 전달하고, 로그인 결과를 받는다.
-
-      - 로그인 정보 데이터 보내기 
-
-        - JSON 형식
-        - id : 사용자가 입력한 id
-        - pw : 사용자가 입력한 pw
-
-      - 로그인 결과 
-
-        - BodyShopDTO 객체를 받는다.
-
-          ```java
-          private BodyShopDTO sendPost(String id, String pw) throws Exception {
-          
-              Log.i("sendPost", "sendPost 들어왔다 1" );
-          
-              String receivedata;
-              String sendMsg;
-          
-              URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/login.do");
-          
-              HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-              conn.setRequestMethod("POST");
-              //        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-              conn.setRequestProperty("Content-Type", "application/json");
-              conn.setRequestProperty("Connection", "Keep-Alive");
-              conn.setRequestProperty("charset", "utf-8");
-              OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
-          
-              Map<String, String> map = new HashMap<String, String>();
-          
-              map.put("id", id);
-              map.put("pw", pw);
-          
-              ObjectMapper mapper = new ObjectMapper();
-              String json = mapper.writeValueAsString(map);
-          
-              osw.write(json);
-              osw.flush();
-          
-              int responseCode = conn.getResponseCode();
-              BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-              String inputLine;
-              StringBuffer response = new StringBuffer();
-              while ((inputLine = in.readLine()) != null) {
-                  response.append(inputLine);
-              }
-              receivedata = response.toString();
-              in.close();
-              BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {
-              });
-          
-              SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
-              SharedPreferences.Editor editor = preferences.edit();
-              Gson gson = new Gson();
-              String bodyshopjson = gson.toJson(myObject);
-              editor.putString("myObject", bodyshopjson);
-              editor.commit();
-          
-          
-              return myObject;
-          }
-          ```
-
-          <br>
-
-        - 만약 Bodyshop_id가 "NO" 가 아닌 경우, 로그인 성공을 뜻한다.
-
-          만약 Bodyshop_id가 "NO" 인 경우, 로그인 실패를 뜻한다.
-
-          ```java
-          if (dto.getBodyshop_id().equals("NO")) {
-              SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
-              SharedPreferences.Editor editor = preferences.edit();
-              editor.clear();
-              editor.commit();
-              makeDialog();
-          } else {
-          
-              // 서비스 실행
-              Intent i = new Intent();
-              ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
-              i.setComponent(sComponentName);
-              startService(i);
-          
-              Intent intent = new Intent();
-              ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
-              intent.setComponent(componentName);
-              intent.putExtra("data", dto);
-              startActivity(intent);
-              Log.i("LOGIN", dto.getBodyshop_id());
-              Log.i("msi", "로그인 성공!!");
-          }
-          ```
-
-      <br>
-
-      - ID와 비밀번호가 맞는 경우, 로그인에 성공한다.
-
-        - 자동 로그인 기능 추가
-
-          - 어플리케이션이 삭제되거나, 로그아웃을 하면 로그인 정보 내역이 삭제된다.
-
-            ```java
-            if (dto.getBodyshop_id().equals("NO")) {
-                SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.commit();
-                // 로그인 실패 다이얼로드 띄우기
-                makeDialog();
-            } else {
-            
-                // 로그인 성공 ! 서비스 실행 & 예약 현황 화면으로 이동
-                Intent i = new Intent();
-                ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
-                i.setComponent(sComponentName);
-                startService(i);
-            
-                Intent intent = new Intent();
-                ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
-                intent.setComponent(componentName);
-                intent.putExtra("data", dto);
-                startActivity(intent);
-            }
-            ```
-
-            
-
-      - ID와 비밀번호가 틀린 경우, 로그인에 실패한다.
-
-      <br>
-
-  - 아이디 / 비밀번호 찾기
-
-    - 아이디 찾기
-
-      - 정비소 등록 시 입력한 정비소 이름을 이용해 아이디를 찾는다.
-
-    - 비밀번호 찾기
-
-      - ID와 정비소 이름을 이용해 비밀번호를 찾는다.
-
-      <br>
-
-  - 정비소 등록
-
-    - 정비소 등록이 필요한 경우, 정비소 등록 화면으로 이동한다.
-
-<br>
-
-<br>
-
-
-
-### 아이디 찾기 화면 (FindIDActivity)
+### 아이디 찾기 (FindIDActivity)
 
 - 정비소의 ID는 서버에서 생성하기 때문에, 사용자에게  익숙하지 않다. 
 
@@ -607,11 +438,12 @@
     <br>
 
     - 정비소 이름으로 등록된 정비소가 있는 경우, 정비소의 ID 를 Return한다.
-      -  findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
+
+      - findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
 
     - 정비소 이름으로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
 
-      -  findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
+      - findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
 
       ```java
       final Handler handler = new Handler(){
@@ -630,25 +462,27 @@
       };
       ```
 
+<br>
 
 
-# 수정하기
 
 ### 비밀번호 찾기 화면 (FindPwActivity)
 
-- 
+- 자동로그인 기능으로 비밀번호를 잊어버리는 경우가 많이 발생한다. 
+
+  그래서 비밀번호 찾기 기능을 필수 이다.
 
 - 기능 
 
-  - 아이디 찾기
+  - 비밀번호 찾기
 
-    - 정비소 등록 시 입력한 정비소 이름을 이용해 아이디를 찾는다.
+    - 정비소 등록 시 입력한 정비소 이름과 아이디를 이용해 비밀번호를 찾는다.
 
-    - '아이디 찾기'를 누르면 아이디 찾기 기능을 수행하는 Thread를 실행한다.
+    - '비밀번호 찾기'를 누르면 비밀번호 찾기 기능을 수행하는 Thread를 실행한다.
 
       ```java
-      FindIdRunnable findIdRunnable = new FindIdRunnable(fidname.getText().toString(), handler);
-      Thread thread = new Thread(findIdRunnable);
+      FindPwRunnable findpwRunnable = new FindPwRunnable(fpwname.getText().toString(), fpwid.getText().toString() , handler);
+      Thread thread = new Thread(findpwRunnable);
       thread.start();
       ```
 
@@ -682,7 +516,7 @@
     Map<String, String> map = new HashMap<String, String>();
     
     map.put("bodyshop_name", name);
-    map.put("bodyshop_id", "NO");
+    map.put("bodyshop_id", id);
     
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(map);
@@ -703,12 +537,13 @@
 
     <br>
 
-    - 정비소 이름으로 등록된 정비소가 있는 경우, 정비소의 ID 를 Return한다.
-      -  findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
+    - 정비소 이름과 아이디로 등록된 정비소가 있는 경우, 정비소의 비밀번호를 Return한다.
 
-    - 정비소 이름으로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
+      - findSuccessDialog() : 사용자의 정비소 비밀번호를 알리고, 로그인 화면으로 이동하는 Dialog
 
-      -  findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
+    - 정비소 이름과 ID로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
+
+      - findFailDialog() : 비밀번호 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
 
       ```java
       final Handler handler = new Handler(){
@@ -717,11 +552,10 @@
               super.handleMessage(msg);
               Bundle bundle = msg.getData();
               String result = bundle.getString("result");
-              Log.i("RESULT__", result);
-              if (!result.equals("\"NO\"")){
-                  findSuccessDialog(result);
-              } else {
+              if (result.equals("\"NO\"")){
                   findFailDialog(result);
+              } else {
+                  findSuccessDialog(result);
               }
           }
       };
@@ -729,30 +563,635 @@
 
     
 
+<br>
+
+<br>
+
+## 회원 로그인
+
+### 정비소 로그인 (LoginActivity)
+
+- 서버에 의해 부여된 ID와 정비소 등록 시 설정한 비밀번호로 로그인 한다.
+
+- 기능
+
+  - 로그인
+
+    - '로그인 버튼'을 누르면, Thread를 생성하여 sendPost() 함수를 호출한다.
+
+      ```java
+      try {
+        Thread wThread = new Thread() {
+              public void run() {
+                try {
+                      dto = sendPost(userId.getText().toString(), userpw.getText().toString());
+                } catch (Exception e) {
+                      Log.i("LoginAcitivty_HERE", e.toString());
+                }
+              }
+        };
+          wThread.start();
+      
+          try {
+            wThread.join();
+          } catch (Exception e) {
+            Log.i("LoginAcitivty_ERROR", e.toString());
+          }
+      } catch (Exception e) {
+          Log.i("LoginAcitivty_ERROR", e.toString());
+      }
+      ```
+
+    - sendPost() : 서버와의 HTTP 통신을 통해 로그인 정보를 전달하고, 로그인 결과를 받는다.
+
+      - 로그인 정보 데이터 보내기 
+
+        - JSON 형식
+        - id : 사용자가 입력한 id
+        - pw : 사용자가 입력한 pw
+
+      - 로그인 결과 
+
+        - BodyShopDTO 객체를 받는다.
+
+          - 해당 객체를 SharedPreferences에 저장한다.
+
+            ```java
+            private BodyShopDTO sendPost(String id, String pw) throws Exception {
+            
+                String receivedata;
+                String sendMsg;
+            
+                URL url = new URL("http://70.12.115.73:9090/Chavis/Bodyshop/login.do");
+            
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Connection", "Keep-Alive");
+                conn.setRequestProperty("charset", "utf-8");
+                OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+            
+                Map<String, String> map = new HashMap<String, String>();
+            
+                map.put("id", id);
+                map.put("pw", pw);
+            
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(map);
+            
+                osw.write(json);
+                osw.flush();
+            
+                int responseCode = conn.getResponseCode();
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                receivedata = response.toString();
+                in.close();
+                BodyShopDTO myObject = mapper.readValue(receivedata, new TypeReference<BodyShopDTO>() {
+                });
+            
+                SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                Gson gson = new Gson();
+                String bodyshopjson = gson.toJson(myObject);
+                editor.putString("myObject", bodyshopjson);
+                editor.commit();
+            
+            
+                return myObject;
+            }
+            ```
+
+          <br>
+
+        - 만약 Bodyshop_id가 "NO" 가 아닌 경우, 로그인 성공을 뜻한다.
+
+          만약 Bodyshop_id가 "NO" 인 경우, 로그인 실패를 뜻한다.
+
+          ```java
+          if (dto.getBodyshop_id().equals("NO")) {
+              SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+              SharedPreferences.Editor editor = preferences.edit();
+              editor.clear();
+              editor.commit();
+              makeDialog();
+          } else {
+          
+              // 서비스 실행
+              Intent i = new Intent();
+              ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+              i.setComponent(sComponentName);
+              startService(i);
+          
+              Intent intent = new Intent();
+              ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+              intent.setComponent(componentName);
+              intent.putExtra("data", dto);
+              startActivity(intent);
+              Log.i("LOGIN", dto.getBodyshop_id());
+              Log.i("msi", "로그인 성공!!");
+          }
+          ```
+
+      <br>
+
+      - ID와 비밀번호가 맞는 경우, 로그인에 성공한다.
+
+        - 서비스를 수행하고 예약 내역 화면으로 이동한다. 
+
+          ```java
+          if (dto.getBodyshop_id().equals("NO")) {
+              SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+              SharedPreferences.Editor editor = preferences.edit();
+              editor.clear();
+              editor.commit();
+              // 로그인 실패 다이얼로드 띄우기
+              makeDialog();
+          } else {
+          
+              // 로그인 성공 ! 서비스 실행 & 예약 현황 화면으로 이동
+              Intent i = new Intent();
+              ComponentName sComponentName = new ComponentName("com.example.myapplication", "com.example.myapplication.BodyShopService");
+              i.setComponent(sComponentName);
+              startService(i);
+          
+              Intent intent = new Intent();
+              ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+              intent.setComponent(componentName);
+              intent.putExtra("data", dto);
+              startActivity(intent);
+          }
+          ```
+
+          
+
+      - ID와 비밀번호가 틀린 경우, 로그인에 실패한다.
+
+        - SharedPreferences의 모든 데이터를 지운다. 
+
+      <br>
+
+  - 아이디 / 비밀번호 찾기
+
+    - 아이디 찾기
+
+      - 정비소 등록 시 입력한 정비소 이름을 이용해 아이디를 찾는다.
+
+    - 비밀번호 찾기
+
+      - ID와 정비소 이름을 이용해 비밀번호를 찾는다.
+
+      <br>
+
+  - 정비소 등록
+
+    - 정비소 등록이 필요한 경우, 정비소 등록 화면으로 이동한다.
+
+  - '뒤로 가기' 2번 연속으로 터치하면 어플리케이션 종료
+
+    - BackPressCloseHandler
+
+<br>
+
+<br>
 
 
-### 
 
-### 정비소 예약 현황 확인 화면
+
+
+## 예약 정보 확인
+
+### 정비소 예약 현황 확인 화면 (ReservationStatusActivity)
 
 - 해당 정비소에 등록된 예약 현황을 리스트로 확인한다.
 
 - 기능
 
-  - 예약내역 상세 확인 
+  - 정비소 정보 
 
-    - 예약자
-    - 예약된 차량 정보
-    - 원격키 사용여부
-    - 수리  여부 (수리 중, 수리 완료)
+    - SharedPreferences에 저장된 정비소 정보를 가져와 정비소 이름 Textview에 꾸며준다.
 
-    <br>
+      ```java
+      SharedPreferences preferences;
+      preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+      String myObject = preferences.getString("myObject", "NO");
+      
+      Gson gson = new Gson();
+      final BodyShopDTO bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
+      
+      shop_name.setText(bodyShopDTO.getBodyshop_name());
+      
+      ```
 
-  - 예약 내역 클릭 시, 차량 문 제어 화면 (CarKeyActivity) 으로 넘어간다.
+      
+
+  - 예약 내역 정보 가져오기
+
+    - MyReservationRunnable 을 통해 서버로부터 로그인된 정비소 앞으로 등록된 에약 내역들을 가져온다.
+
+      ```java
+      MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
+      Thread thread = new Thread(myReservationRunnable);
+      thread.start();
+      ```
+
+    - #### MyReservationRunnable 
+
+      - 해당 정비소의 no값을 서버에게 전달하면, 해당 정비소 앞으로 등록된 예약 내역 리스트를 받는다.
+
+        - bodyshop_no 값 전달
+
+          ```java
+          OutputStreamWriter osw = new OutputStreamWriter(conn.getOutputStream());
+          
+          Map<String, String> map = new HashMap<String, String>();
+          
+          map.put("bodyshop_no", id);
+          
+          ObjectMapper mapper = new ObjectMapper();
+          String json = mapper.writeValueAsString(map);
+          
+          Log.i("MyReservationRunnable", "SERVER에게 보내는 데이터 : " + json);
+          
+          osw.write(json);
+          osw.flush();
+          ```
+
+        - Jackson 라이브러리를 이용해 json array로 전송된 예약 내역 리스트를 ArrayList< ReservationListDTO > Type으로 변환하여 저장한다.
+
+          ```java
+          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+          String inputLine;
+          StringBuffer response = new StringBuffer();
+          
+          while ((inputLine = in.readLine()) != null) {
+              response.append(inputLine);
+          }
+          
+          receivedata = response.toString();
+          ArrayList<ReservationListDTO> myObject = mapper.readValue(receivedata, new TypeReference<ArrayList<ReservationListDTO>>() {
+          });
+          in.close();
+          ```
+
+        - 전달받은 예약 내역 리스트를 리스트뷰에 붙이기 위해 Bundle, Message, Handler를 사용한다.
+
+          ```java
+          Bundle bundle = new Bundle();
+          bundle.putParcelableArrayList("reservation_list", myObject);
+          
+          Message message = new Message();
+          message.setData(bundle);
+          
+          handler.sendMessage(message);
+          ```
+
+  
+
+  - 예약내역 상세 확인
+
+    - 커스텀 리스트뷰를 통해 예약 상세 내역을 확인할 수 있다. 
+
+      - 예약자
+      - 예약된 차량 정보
+      - 원격키 사용여부
+      - 수리  여부 (수리 중, 수리 완료)
+
+    - Handler를 통해 서버로부터 전달받은 데이터를 커스텀 어댑터를 이용해 리스트뷰를 꾸민다.
+
+      ```java
+      handler = new Handler() {
+          @Override
+          public void handleMessage(@NonNull Message msg) {
+              super.handleMessage(msg);
+              Bundle bundle = msg.getData();
+              ArrayList<ReservationListDTO> result = bundle.getParcelableArrayList("reservation_list");
+              // 예약 내역 유무 확인 
+              TextView nolist = (TextView) findViewById(R.id.nolist);
+              if (result.size() == 0) {
+                  nolist.setVisibility(View.VISIBLE);
+              } else {
+                  nolist.setVisibility(View.GONE);
+      
+                  adapter.removeAllList();
+                  for (ReservationListDTO dto : result) {
+                      adapter.addItem(dto);
+                  }
+      
+              }
+              listView.setAdapter(adapter);
+              adapter.notifyDataSetChanged();
+          }
+      };
+      ```
+
+      
+
+  - 예약 내역 유무에 따라 화면 구성을 달리하여, 예약 내역 유무를 사용자에게 알린다.
+
+    - 만약 해당 정비소 앞으로 등록된 예약 내역이 없는 경우, Textview의 VISIBLE을 VISIBLE로 설정한다.
+
+    - 만약 해당 정비소 앞으로 등록된 예약 내역이 있는 경우, Textview의 VISIBLE을 GONE으로 설정한다.
+
+      - 해당 TextView의 공간이 없어짐
+
+        ```java
+        ArrayList<ReservationListDTO> result = bundle.getParcelableArrayList("reservation_list");
+        
+        TextView nolist = (TextView) findViewById(R.id.nolist);
+        	// 예약 내역이 없는 경우
+        if (result.size() == 0) {
+            nolist.setVisibility(View.VISIBLE);
+            Log.i("FIRST", "데이터 없음");
+        } else {
+        	// 예약 내역이 있는 경우
+            nolist.setVisibility(View.GONE);
+            Log.i("FIRST", "데이터 있음");
+        
+            adapter.removeAllList();
+            for (ReservationListDTO dto : result) {
+                adapter.addItem(dto);
+            }
+        
+        ```
+
+      - 예약 내역이 없는 경우의 실행화면
+
+        ![1571831901187](https://user-images.githubusercontent.com/39547788/67391823-65bbe880-f5da-11e9-8159-03b6eefcce93.png)
+
+      - 예약 내역이 있는 경우의 실행화면
+
+        ![1571831922794](https://user-images.githubusercontent.com/39547788/67391824-65bbe880-f5da-11e9-9909-3d31fbbea0e4.png)
+
+      <br>
+
+    - 특정 예약 내역 클릭 시, 원격키 및 수리 관리 화면 (CarKeyActivity) 으로 넘어간다.
+
+    - `startActivityForResult(intent, 5050)`
+
+      - 원격키 및 수리 관련 작업이 성공적으로 마무리되면 수리 결과를 반영하기 위해 다시 해당 화면으로 돌아오도록 한다.
+
+      - 해당 화면으로 돌아왔을 경우, 자동으로 `onActivityResult()` 함수가 콜백된다. 
+
+        - MyReservationRunnable를 수행하여 수리 내역이 반영된 리스트를 출력한다.
+
+          ```java
+          @Override
+          protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+              super.onActivityResult(requestCode, resultCode, data);
+              MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
+              Thread thread = new Thread(myReservationRunnable);
+              thread.start();
+          }
+          ```
+
+          
+
+  
+
+  - 예약 내역 갱신
+
+    - 버튼 
+
+      ![1571830480903](https://user-images.githubusercontent.com/39547788/67391820-65235200-f5da-11e9-8ec9-0b124511d325.png)
+
+      <br>
+
+    - 위의 이미지 버튼을 눌러 새로운 예약 내역을 갱신할 수 있다.
+
+      - 버튼을 누르면 서버로 부터 해당 정비소 앞으로 등록된 예약 정보를 가져오는 MyReservationRunnable가 수행된다. 
+
+        ```java
+        btn_getNewList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyReservationRunnable myReservationRunnable = new MyReservationRunnable(bodyShopDTO.getBodyshop_no(), handler);
+                Thread thread = new Thread(myReservationRunnable);
+                thread.start();
+            }
+        });
+        ```
+
+  - 로그아웃
+
+    - 버튼
+
+      ![1571830637271](https://user-images.githubusercontent.com/39547788/67391822-65bbe880-f5da-11e9-9cfa-aa98686adb9b.png)
+
+      <br>
+
+    - 위의 이미지 버튼을 눌러 사용자는 로그아웃을 할 수 있다. 
+
+      - 버튼을 누르면 logOutDialog()를 호출한다.
+
+        ```java
+        btn_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logOutDialog();
+            }
+        });
+        ```
+
+      - logOutDialog() : 로그아웃 여부를 한번 더 물어본다. 
+
+        - '네'을 누르면, SharedPreferences에 저장된 모든 내역을 삭제한다.
+
+        - '아니요'를 누르면, Dialog 상자를 닫는다.
+
+          ```java
+          public void logOutDialog() {
+              AlertDialog.Builder alert = new AlertDialog.Builder(ReservationStatusActivity.this);
+              alert.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      SharedPreferences.Editor editor = preferences.edit();
+                      editor.clear();
+                      editor.commit();
+                      Intent intent = new Intent();
+                      ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.OpeningActivity");
+                      intent.setComponent(componentName);
+                      startActivity(intent);
+                      dialog.dismiss();     //닫기
+                  }
+              });
+              alert.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                      dialog.dismiss();     //닫기
+                  }
+              });
+              alert.setMessage("로그아웃 하시겠습니까?");
+              alert.show();
+          }
+          ```
+
+  - '뒤로 가기'로 어플리케이션 종료하기
+
+    ```java
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+    }
+    
+    ```
+
+    
 
 <br>
 
 <br>
+
+### 예약 리스트 어댑터 (ReservationAdapter)
+
+- 예약 리스트는 원격키 사용여부, 수리 여부 등 다양한 정보가 포함되어있다. 
+
+  그래서 각 상황에 맞는 이미지를 보여, 한눈에 알기 쉽도록 한다. 
+
+  (글이 아닌 이미지로 한눈에 파악할 수 있다. )
+
+- 예약 리스트에 나타낼 정보
+
+  - 예약 날짜 및 시간 (YYYY-MM-dd HH-mm)
+  - 예약자 이름
+  - 등록된 차의 종류
+  - 등록된 차 번호
+
+  - 원격키 사용 여부에 따른 이미지 구분
+
+    - 원격키 사용 
+
+      ![1571828481539](https://user-images.githubusercontent.com/39547788/67391813-648abb80-f5da-11e9-9c93-9145177af6f1.png)
+
+    - 원격키 사용 안함
+
+      ![1571828523864](https://user-images.githubusercontent.com/39547788/67391814-648abb80-f5da-11e9-8a57-c8c990ad8158.png)
+
+  - 수리 여부에 따른 이미지 구분
+
+    - 아직 수리가 완료되지 않은 예약
+
+      ![1571828638865](https://user-images.githubusercontent.com/39547788/67391817-65235200-f5da-11e9-9fde-1f543d8ac58a.png)
+
+      <br>
+
+    - 수리가 완료된 예약 
+
+      ![1571828632831](https://user-images.githubusercontent.com/39547788/67391816-648abb80-f5da-11e9-9a40-f4d6c9597d43.png)
+
+      <br>
+
+- 주요 메서드 
+
+  - removeAllList()
+
+    - 리스트뷰에 추가된 모든 list item을 삭제한다.
+
+      ```java
+      public void removeAllList(){
+          list.clear();
+      }
+      ```
+
+  - addItem()
+
+    - 리스트뷰에 보이게 할 list item을 추가한다. 
+
+      ```java
+      public void addItem(ReservationListDTO dto){
+          list.add(dto);
+      }
+      ```
+
+  - getView()
+
+    - 커스텀 list item layout에 예약 관련 정보를 채운다.
+
+      ```java
+      public View getView(int i, View view, ViewGroup viewGroup) {
+      
+          final Context context = viewGroup.getContext();
+          final RecyclerView.ViewHolder viewHolder;
+      
+          // 출력할 View 객체를 생성
+          if (view == null) {
+              LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      
+              // 제작한 Custom 형태의 xml의 형태로 view 객체를 구성하게 된다.
+              // 생성한 View 객체에 XML Layout을 설정
+              view = inflater.inflate(R.layout.reservation_list, viewGroup, false);
+          }
+      
+          // 출력할 View Component Reference 획득
+          TextView reservation_time = (TextView) view.findViewById(R.id.reservation_time);
+          TextView member_mname = (TextView) view.findViewById(R.id.member_mname);
+          TextView cartype = (TextView) view.findViewById(R.id.cartype);
+          TextView carid = (TextView) view.findViewById(R.id.carid);
+          ImageView key_status = (ImageView) view.findViewById(R.id.key_status);
+          ImageView repair_status = (ImageView) view.findViewById(R.id.repair_status);
+      
+          // 화면에 출력할 데이터를 가져온다.
+          ReservationListDTO dto = list.get(i);
+      
+          try {
+      
+              reservation_time.setText(dto.getReservation_time());
+              member_mname.setText(dto.getMember_mname());
+              cartype.setText(dto.getCar_type());
+              carid.setText(" ( " + dto.getCar_id() + " ) ");
+              String key_s = dto.getKey();
+              if (key_s.equals("NO")){
+                  key_status.setImageResource(R.drawable.nokey);
+              } else {
+                  key_status.setImageResource(R.drawable.key);
+              }
+              String repair_s = dto.getRepaired_time();
+              if (repair_s.equals("NO")){
+                  repair_status.setImageResource(R.drawable.ing);
+              } else {
+                  repair_status.setImageResource(R.drawable.done);
+              }
+      
+          } catch (Exception e) {
+              Log.i("Adapter ERROR_", e.toString());
+          }
+      
+          return view;
+      }
+      ```
+
+    - reservation_list
+
+      - 커스텀 list item 구성 화면 예시
+
+      ![1571829818311](https://user-images.githubusercontent.com/39547788/67391819-65235200-f5da-11e9-87fe-b362e28e704c.png)
+
+      <br>
+
+
+
+<br>
+
+<br>
+
+
+
+
+
+
+
+<br>
+
+<br>
+
+
+
+## 수리 정보 확인
 
 ### 차량 원격키 제어 화면
 
@@ -778,3 +1217,9 @@
 <br>
 
 <br>
+
+
+
+## TCP 통신 Service
+
+- 서버와 TCP 통신을 통해 서버에 데이터를 보내고 받는다.
