@@ -1223,3 +1223,8 @@
 ## TCP 통신 Service
 
 - 서버와 TCP 통신을 통해 서버에 데이터를 보내고 받는다.
+- 프로토콜 정리
+  - 원격키 사용
+    - **CarOpen**#[예약한 회원번호 (getMember_no()) ]#[예약된 차량번호 (getCar_id()) ]
+  - 수리완료 목록
+    - **RepairFinish**#[수리목록]
