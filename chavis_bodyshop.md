@@ -1,3 +1,9 @@
+
+
+
+
+
+
 # ChavisBodyShop
 
 ![1570719347499](https://user-images.githubusercontent.com/39547788/66580603-a1f25080-ebb9-11e9-8c9f-45c4ad6c96e5.png)
@@ -439,28 +445,28 @@
 
     - 정비소 이름으로 등록된 정비소가 있는 경우, 정비소의 ID 를 Return한다.
 
-      - findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
+- findSuccessDialog() : 사용자의 정비소 ID를 알리고, 로그인 화면으로 이동하는 Dialog
 
-    - 정비소 이름으로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
+- 정비소 이름으로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
 
-      - findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
+  - findFailDialog() : 아이디 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
 
-      ```java
-      final Handler handler = new Handler(){
-          @Override
-          public void handleMessage(@NonNull Message msg) {
-              super.handleMessage(msg);
-              Bundle bundle = msg.getData();
-              String result = bundle.getString("result");
-              Log.i("RESULT__", result);
-              if (!result.equals("\"NO\"")){
-                  findSuccessDialog(result);
-              } else {
-                  findFailDialog(result);
-              }
-          }
-      };
-      ```
+    ```java
+    final Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle bundle = msg.getData();
+            String result = bundle.getString("result");
+            Log.i("RESULT__", result);
+            if (!result.equals("\"NO\"")){
+                findSuccessDialog(result);
+            } else {
+                findFailDialog(result);
+            }
+        }
+    };
+    ```
 
 <br>
 
@@ -539,27 +545,27 @@
 
     - 정비소 이름과 아이디로 등록된 정비소가 있는 경우, 정비소의 비밀번호를 Return한다.
 
-      - findSuccessDialog() : 사용자의 정비소 비밀번호를 알리고, 로그인 화면으로 이동하는 Dialog
+- findSuccessDialog() : 사용자의 정비소 비밀번호를 알리고, 로그인 화면으로 이동하는 Dialog
 
-    - 정비소 이름과 ID로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
+- 정비소 이름과 ID로 등록된 정비소가 없는 경우, "NO" 를 Return 한다.
 
-      - findFailDialog() : 비밀번호 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
+  - findFailDialog() : 비밀번호 찾기를 실패했음을 알리고, 재 입력 여부를 묻는 Dialog
 
-      ```java
-      final Handler handler = new Handler(){
-          @Override
-          public void handleMessage(@NonNull Message msg) {
-              super.handleMessage(msg);
-              Bundle bundle = msg.getData();
-              String result = bundle.getString("result");
-              if (result.equals("\"NO\"")){
-                  findFailDialog(result);
-              } else {
-                  findSuccessDialog(result);
-              }
-          }
-      };
-      ```
+    ```java
+    final Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            Bundle bundle = msg.getData();
+            String result = bundle.getString("result");
+            if (result.equals("\"NO\"")){
+                findFailDialog(result);
+            } else {
+                findSuccessDialog(result);
+            }
+        }
+    };
+    ```
 
     
 
@@ -1058,8 +1064,11 @@
 - 예약 리스트에 나타낼 정보
 
   - 예약 날짜 및 시간 (YYYY-MM-dd HH-mm)
+
   - 예약자 이름
+
   - 등록된 차의 종류
+
   - 등록된 차 번호
 
   - 원격키 사용 여부에 따른 이미지 구분
@@ -1204,9 +1213,16 @@
     - 원격키 허용한 경우
       - 원격키 버튼 활성화
         - 차량 도어 제어 가능
+      - 수리 정보 관리 및 등록
+        - 수리한 정비사 명
+        - 수리 내역
+        - 수리 완료 날짜
+      - 실행화면
     - 원격키 허용하지 않은 경우
       - 원격키 버튼 비활성화
         - 차량 도어 제어 불가능
+      - 수리한 정비사 이름을 화면에 보인다.
+      - 실행화면
 
     <br>
 
@@ -1223,8 +1239,228 @@
 ## TCP 통신 Service
 
 - 서버와 TCP 통신을 통해 서버에 데이터를 보내고 받는다.
+
 - 프로토콜 정리
+
   - 원격키 사용
+
+    **[ 서버에게 보내기]**
+
     - **CarOpen**#[예약한 회원번호 (getMember_no()) ]#[예약된 차량번호 (getCar_id()) ]
+
+      - 현재 정비소에서 차 도어를 오픈할 차량에 대한 정보
+        - 차키 이미지를 선택하면 서버에게 예약한 회원정보와 예약된 차량 번호를 전달한다.
+
+    - **Key**#[원격키 값]
+
+      - 서버에서 보낸 원격키를 받았다는 의미로 받은 즉시 바로 서버에게 돌여준다.
+
+      <br>
+
+    **[서버에게 받기]**
+
+    - **Key**#[원격키 값]
+      - 서버에서 원격키 검증을 위해 정비소에게 원격키 값을 전달한다.
+
+  <br>
+
   - 수리완료 목록
-    - **RepairFinish**#[수리목록]
+
+    **[서버에게 보내기]**
+
+    - **RepairFinish**/[수리목록]/[예약번호]/[수리완료시간]/[수리한 정비사명]
+
+      - 수리목록
+
+        - 수리한 내역을 #로 구분
+
+          예 > 타이어#와이퍼
+
+        
+
+        <br>
+
+    **[서버에게 받기]**
+
+    - **RepairFinishResult**#[수리결과]
+      - 수리 결과 (성공 또는 실패 여부)에 대한 정보
+        - 수리 결과 ("Success" 또는 "Fail") 값을 CarKeyActivity에게 돌려준다.
+
+- 서버 연결
+
+  - Service가 Strat되어 호출되는 순간, 서버와 통신하는 Thread를 수행한다.
+
+    ```java
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // 서비스가 호출될 때마다 실행
+    
+        SharedPreferences preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+        String myObject = preferences.getString("myObject", "NO");
+    
+        Gson gson = new Gson();
+        bodyShopDTO = gson.fromJson(myObject, BodyShopDTO.class);
+    
+        ClientReceiveRunnable receiveRunnable = new ClientReceiveRunnable();
+        ClientSendRunnable sendRunnable = new ClientSendRunnable(blockingQueue);
+        Thread thread1 = new Thread(receiveRunnable);
+        Thread thread2 = new Thread(sendRunnable);
+        thread1.start();
+        thread2.start();
+    
+        return super.onStartCommand(intent, flags, startId);
+    }
+    ```
+
+    <br>
+
+    - ClientReceiveRunnable
+
+      - 서버에서 보내는 데이터를 받는다.
+
+        - 로그인 후, 서비스를 시작하는 순간 서버에게 로그인된 정비소의 Bodyshop_no를 전달한다. 
+
+          ```java
+          class ClientReceiveRunnable implements Runnable{
+          
+              Intent receiveIntent = new Intent();
+          
+              @Override
+              public void run() {
+                  try {
+                      try {
+                          socket = new Socket("70.12.115.63", 6767);
+                          Log.i("BodyShopService", "서버 연결 성공!!");
+                          br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                          out = new PrintWriter(socket.getOutputStream());
+                      } catch (Exception e) {
+                          Log.i("BodyShopServiceError", "서버 연결 실패 : " + e.toString());
+                      }
+          
+                      out.println("BodyShopNO#" + bodyShopDTO.getBodyshop_no());
+                      out.flush();
+                      String s = "";
+          
+                      while ((s = br.readLine()) != null) {
+                          Log.i("BodyShopService", "서버로 받는 데이터 : " + s);
+                          String msg[] = s.split("#");
+                          if (msg[0].equals("Key")) {
+                              blockingQueue.add("Key#" + msg[1]);
+                          } else if (msg[0].equals("RepairFinishResult")){
+                              receiveIntent = new Intent();
+                              ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.CarKeyActivity");
+                              receiveIntent.putExtra("repairedResult", msg[1]);
+                              receiveIntent.setComponent(componentName);
+                              receiveIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                              receiveIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                              receiveIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                              startActivity(receiveIntent);
+                          }
+          
+                      }
+                  } catch (Exception e) {
+                      Log.i("BodyShopServiceError", "읽기 문제 : " + e.toString());
+                  }
+          
+              }
+          }
+          ```
+
+        
+
+    - ClientSendRunnable
+
+      - 서버에게 데이터를 보낸다.
+
+        ```java
+        class ClientSendRunnable implements Runnable {
+            BlockingQueue blockingQueue;
+        
+            ClientSendRunnable(BlockingQueue blockingQueue) {
+                this.blockingQueue = blockingQueue;
+            }
+        
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        String msg = (String) blockingQueue.take();
+                        Log.i("BodyShopService", "blocking queue send: " + msg);
+                        out.println(msg);
+                        out.flush();
+                    } catch (Exception e) {
+                        Log.i("BodyShopServiceError", "blocking queue 문제 : " + e.toString());
+                    }
+                }
+            }
+        }
+        ```
+
+        
+
+- Activity에서 Serviece 객체 사용하기
+
+  - Bind
+
+    - 프로세스랑 프로세스를 연결하여 통신가능하도록 만들어 놓은 객체
+
+    - Bind 객체를 가지고 Service에 접근할 수 있다. 
+
+    - Activity에서는 Bind 객체를 이용해 Service의 public으로 선언된 함수들을 호출할 수 있다. 
+
+      - MyBinder 클래스
+
+        - Service 객체를 제공한다.
+
+          ```java
+          IBinder mBinder = new MyBinder();
+          
+          class MyBinder extends Binder {
+              BodyShopService getService(){
+                  return BodyShopService.this;
+              }
+          }
+          
+          @Override
+          public IBinder onBind(Intent intent) {
+              return mBinder;
+          }
+          ```
+
+        <br>
+
+  - Activity에서 사용할 함수 정의
+
+    - clientToServer()
+
+      - 클라이언트 (안드로이드 어플)가 서버 (Java TCP 서버)에게 데이터 전송한다.
+
+        ```java
+        public void clientToServer(String protocol , String msg){
+        
+            if(protocol.equals("CarOpen")){
+                Log.i("BodyShopService" , protocol);
+                Log.i("BodyShopService" , msg);
+                blockingQueue.add(protocol + "#" + msg);
+            } else if (protocol.equals("RepairFinish")){
+                Log.i("BodyShopService" , protocol);
+                Log.i("BodyShopService" , msg);
+                blockingQueue.add(protocol + "#" + msg);
+            } else {
+                Log.i("BodyShopService" , "프로토콜 문제 발생");
+            }
+        
+        }
+        ```
+
+      
+
+<br>
+
+<br>
+
+
+
+
+
+### Blocking Queue
