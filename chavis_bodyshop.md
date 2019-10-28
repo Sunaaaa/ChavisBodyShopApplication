@@ -4,6 +4,10 @@
 
 
 
+
+
+
+
 # ChavisBodyShop
 
 ![1570719347499](https://user-images.githubusercontent.com/39547788/66580603-a1f25080-ebb9-11e9-8c9f-45c4ad6c96e5.png)
@@ -1202,7 +1206,7 @@
 
 ## 수리 정보 확인
 
-### 차량 원격키 제어 화면
+### 차량 원격키 제어 화면 (CarKeyActivity)
 
 - 원격키 사용여부에 따라 원격키 버튼이 활성화 / 비활성화된다.
 
@@ -1216,19 +1220,182 @@
       - 수리 정보 관리 및 등록
         - 수리한 정비사 명
         - 수리 내역
-        - 수리 완료 날짜
+      - 수리 완료 날짜
       - 실행화면
-    - 원격키 허용하지 않은 경우
-      - 원격키 버튼 비활성화
-        - 차량 도어 제어 불가능
-      - 수리한 정비사 이름을 화면에 보인다.
-      - 실행화면
+
+  - 원격키 허용하지 않은 경우
+
+    - 원격키 버튼 비활성화
+    - 차량 도어 제어 불가능
+    - 수리한 정비사 이름을 화면에 보인다.
+    - 실행화면
 
     <br>
 
-  - 수리 완료
+  - 수리 여부
 
-    - 수리 목록 ( 타이어, 와이퍼, 냉각수, 엔진오일 ) 중 수리한 내역을 선택하여 수리한 정비사의 이름과 수리 완료 날짜 ( 현재 시간 )을 서버에 전송한다.
+    - 수리 중 -> 수리 진행
+
+      - 수리 완료 버튼을 누르면 수리 목록을 체크하는 대화 상자를 보인다.
+
+        ```java
+        AlertDialog.Builder dialog = new AlertDialog.Builder(CarKeyActivity.this);
+        dialog.setTitle("수리 목록"). 
+            // Dialog 내용 채우는 코드
+            .create().show();
+        
+        ```
+
+        
+
+      - 수리 목록 ( 타이어, 와이퍼, 냉각수, 엔진오일 ) 중 수리한 내역을 선택한다.
+
+        - 선택한 수리 목록을 selectedItems list에 담아 보관한다.
+
+          ```java
+          .setMultiChoiceItems(
+              items,
+              new boolean[]{false, false, false, false},
+              new DialogInterface.OnMultiChoiceClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                      if (isChecked) {
+                          selectedItems.add(items[which]);
+                      } else {
+                          selectedItems.remove(items[which]);
+                      }
+                  }
+              })
+          ```
+
+          
+
+      - 확인 버튼을 누르면 수리한 정비사의 이름과 수리 완료 날짜 ( 현재 시간 )을 서버에 전송하기 위해 Service를 바인딩 한다.
+
+        - 서버에게 전송할 데이터 다듬기
+
+          - repair_list : 수리 목록 사이에 "#"를 넣고, 마지막 "#"를 제거하기 위해 substring()을 수행한다.
+
+          -  repaired_info : '예약 번호 / 수리 완료 시간 / 수리한 정비사 이름' 의 형태로 저장한다.
+
+            ```java
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            
+            if (selectedItems.size() == 0) {
+                // 반드시 수리 목록은 1개 이상 선택되어야 한다.
+                // 선택된 수리 목록이 없으면 선택하라는 대화상자를 보인다.
+                makeDialog();
+            } else {
+                for (String ckitem : selectedItems) {
+            
+                    switch (ckitem) {
+                        case "타이어":
+                            repair_list += ("Tire" + "#");
+                            break;
+                        case "와이퍼":
+                            repair_list += ("Wiper" + "#");
+                            break;
+                        case "냉각수":
+                            repair_list += ("Cooler" + "#");
+                            break;
+                        case "엔진오일":
+                            repair_list += ("EngineOil" + "#");
+                            break;
+                    }
+                }
+            
+                selectedItems.clear();
+                repair_list = repair_list.substring(0, repair_list.length() - 1);
+                String repaired_time = sdf.format(date);
+                repaired_info = reservationListDTO.getReservation_no() + "/" + repaired_time + "/" + editText.getText().toString();
+                bodyShopService.clientToServer("RepairFinish", repair_list + "/" + repaired_info);
+            }
+            ```
+
+        - Service 바인딩
+
+          - Service의 clinetToServer () 를 사용하기 위해 Service를 바인딩한다.
+
+            - Service 바인딩
+
+              ```java
+              BodyShopService bodyShopService;
+              Boolean isService = false;
+              
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  ServiceConnection conn = new ServiceConnection() {
+                      @Override
+                      public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                          BodyShopService.MyBinder mb = (BodyShopService.MyBinder) iBinder;
+                          bodyShopService = mb.getService();
+                          isService = true;
+                      }
+              
+                      @Override
+                      public void onServiceDisconnected(ComponentName componentName) {
+                          isService = false;
+                      }
+                  };
+                  Intent intent2 = new Intent(CarKeyActivity.this, BodyShopService.class);
+                  bindService(intent2, conn, Context.BIND_ABOVE_CLIENT);
+              
+              }
+              ```
+
+            - clientToServer() 호출
+
+              ```
+              bodyShopService.clientToServer("RepairFinish", repair_list + "/" + repaired_info);
+              ```
+
+          - onNewIntent() 를 콜백과 동시에 수리 완료가 정상적으로 등록 되었는지 확인한다.
+
+            - repairedResult 가 "Success" 인 경우, 예약 정보 확인 화면으로 이동한다.
+            - repairedResult 가 "Fail" 인 경우, 정비목록 및 정비사명이 제대로 입력됬는지 확인하라는 대화 상자를 보인다.
+
+        
+
+    - 수리 완료
+
+      - 원격키 버튼은 disable하도록 설정한다.
+
+      - 수리한 정비사 이름을 화면에 보인다.
+
+        ```java
+        if (!reservationListDTO.getRepaired_person().equals("NO")) {
+            editText.setText(reservationListDTO.getRepaired_person() + " 이/가 정비를 완료했습니다. ");
+            editText.setEnabled(false);
+            btn_getKey.setEnabled(false);
+            btn_getKey.setBackgroundResource(R.drawable.disablekey);
+            btn_repair_finish.setVisibility(View.GONE);
+            pname.setVisibility(View.GONE);
+        } 
+        ```
+
+        
+
+  - '뒤로 가기'를 비활성화
+
+    - 예약 목록보기 버튼을 누르면 예약 정보 확인하는 화면으로 이동한다.
+
+      ```java
+      btn.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              Intent i = new Intent();
+              ComponentName componentName = new ComponentName("com.example.myapplication", "com.example.myapplication.ReservationStatusActivity");
+              i.setComponent(componentName);
+              startActivity(i);
+              finish();
+      
+          }
+      });
+      ```
+
+      
 
 <br>
 
